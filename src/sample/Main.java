@@ -9,9 +9,10 @@ import org.dnu.samoylov.Decision;
 import org.dnu.samoylov.Objective;
 import org.dnu.samoylov.ResultTaskInfo;
 import org.dnu.samoylov.method.DecisionMethod;
+import org.dnu.samoylov.method.diophantine.DiophantineEquation;
+import org.dnu.samoylov.method.diophantine.DiophantineEquationTest;
 import org.dnu.samoylov.method.hillclimbing.HillClimbing;
 import org.dnu.samoylov.statistic.WorkStatistic;
-import org.dnu.samoylov.task.DiophantineEquation;
 import org.dnu.samoylov.task.ProblemTask;
 import org.dnu.samoylov.task.ProblemTaskLoader;
 
@@ -26,9 +27,8 @@ public class Main extends Application {
     }
 
 
-    public static void main(String[] args) {
-        //launch(args);
 
+    public static void main(String[] args) {
         final ProblemTask problemTask = new ProblemTaskLoader().load("destination", DiophantineEquation.class);
 
         final DecisionMethod decisionMethod = HillClimbing.newBuilder()
@@ -43,7 +43,19 @@ public class Main extends Application {
         final Objective minObjective = problemTask.calculateObjective(result);
 
         System.out.println("Result: " + minObjective
-                + "\n\tfor arguments:"+ result
-                + "\n\n work statistic:\n" + statistic );
+                + "\n\tfor arguments:" + result
+                + "\n\n work statistic:\n" + statistic);
+    }
+
+
+
+    public static void mainTest(String[] args) throws Exception {
+        DiophantineEquationTest diophantineEquationTest = new DiophantineEquationTest();
+        diophantineEquationTest.testCalculateFitness();
+        diophantineEquationTest.testCalculateObjective();
+        diophantineEquationTest.testGetAllNeighbor();
+        diophantineEquationTest.testGetNeighbor();
+        diophantineEquationTest.testGetRandomDecision();
+        diophantineEquationTest.testIsFirstBetter();
     }
 }

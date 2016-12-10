@@ -3,36 +3,20 @@ package org.dnu.samoylov.task;
 import org.dnu.samoylov.Decision;
 import org.dnu.samoylov.Objective;
 
-import java.util.Collections;
 import java.util.List;
 
-public class ProblemTask {
+public abstract class ProblemTask<DECISION extends Decision, OBJECTIVE extends Objective> {
 
-    public Objective calculateObjective(Decision result) {
-        return new Objective();
-    }
+    public abstract OBJECTIVE calculateObjective(DECISION decision);
 
-    public Decision getNeighbor(Decision decision, int radious) {
-        return new Decision();
-    }
+    public abstract DECISION getNeighbor(DECISION decision, int radius);
 
-    public List<Decision> getAllNeighbor(Decision decision, int radious) {
-        return Collections.EMPTY_LIST;
-    }
+    public abstract List<DECISION> getAllNeighbor(DECISION decision, int radius);
 
-    public boolean isFirstBetter(Decision first, Decision second) {
-        return compare(first, second) > 0;
-    }
+    public abstract boolean isFirstBetter(DECISION first, DECISION second);
 
-    public int compare(Decision first, Decision second) {
-        return 0;
-    }
 
-    public Decision getRandomDecision() {
-        return new Decision();
-    }
+    public abstract DECISION getRandomDecision();
 
-    public long calculateFitness(Decision decision) {
-        return 0;
-    }
+    public abstract long calculateFitness(DECISION decision);
 }

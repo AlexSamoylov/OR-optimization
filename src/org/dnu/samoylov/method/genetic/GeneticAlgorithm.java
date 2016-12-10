@@ -1,32 +1,31 @@
 package org.dnu.samoylov.method.genetic;
 
 import org.dnu.samoylov.Decision;
+import org.dnu.samoylov.Objective;
 import org.dnu.samoylov.ResultTaskInfo;
 import org.dnu.samoylov.method.DecisionMethod;
 import org.dnu.samoylov.task.ProblemTask;
-
-import java.util.List;
 
 public class GeneticAlgorithm extends DecisionMethod {
     int populationSize = 100;
 
     @Override
-    protected ResultTaskInfo internalProcess(ProblemTask task) {
+    protected <DECISION extends Decision, OBJECTIVE extends Objective> ResultTaskInfo internalProcess(ProblemTask<DECISION, OBJECTIVE> task) {
         final GeneticStatistic statistic = new GeneticStatistic();
 
-        final List<FitnessDecision> population = generatePopulation(populationSize);
-
-        do {
-            final Pair parent =  parentSelection(population);
-
-            final Pair child = crossover(parent);
-
-            final Pair mutationChild = mutation(parent);
-
-            FitnessDecision fitnessDecision1 = calculateFitness(task, mutationChild.first);
-            FitnessDecision fitnessDecision2 = calculateFitness(task, mutationChild.second);
-            replacement(population, fitnessDecision1, fitnessDecision2);
-        } while (true);
+//        final List<FitnessDecision> population = generatePopulation(populationSize);
+//
+//        do {
+//            final Pair parent =  parentSelection(population);
+//
+//            final Pair child = crossover(parent);
+//
+//            final Pair mutationChild = mutation(parent);
+//
+//            FitnessDecision fitnessDecision1 = calculateFitness(task, mutationChild.first);
+//            FitnessDecision fitnessDecision2 = calculateFitness(task, mutationChild.second);
+//            replacement(population, fitnessDecision1, fitnessDecision2);
+//        } while (true);
 
         final Decision result = new Decision();
 

@@ -1,5 +1,7 @@
 package org.dnu.samoylov.method;
 
+import org.dnu.samoylov.Decision;
+import org.dnu.samoylov.Objective;
 import org.dnu.samoylov.ResultTaskInfo;
 import org.dnu.samoylov.statistic.GlobalWorkStatistic;
 import org.dnu.samoylov.task.ProblemTask;
@@ -18,6 +20,6 @@ public abstract class DecisionMethod {
         return new ResultTaskInfo(resultTaskInfo.getResult(), workStatistic);
     }
 
-    protected abstract ResultTaskInfo internalProcess(ProblemTask task);
+    protected abstract <DECISION extends Decision, OBJECTIVE extends Objective> ResultTaskInfo internalProcess(ProblemTask<DECISION, OBJECTIVE> task);
 
 }

@@ -2,6 +2,7 @@ package org.dnu.samoylov.method.hillclimbing;
 
 
 import org.dnu.samoylov.Decision;
+import org.dnu.samoylov.Objective;
 import org.dnu.samoylov.ResultTaskInfo;
 import org.dnu.samoylov.method.DecisionMethod;
 import org.dnu.samoylov.task.ProblemTask;
@@ -20,18 +21,18 @@ public class HillClimbing extends DecisionMethod {
     }
 
     @Override
-    protected ResultTaskInfo internalProcess(ProblemTask task) {
+    protected<DECISION extends Decision, OBJECTIVE extends Objective> ResultTaskInfo internalProcess(ProblemTask<DECISION, OBJECTIVE> task) {
         final HillClimbingStatistic statistic = new HillClimbingStatistic();
 
-        Decision currentNode = task.getRandomDecision();
+        DECISION currentNode = task.getRandomDecision();
 
         boolean found;
 
         do {
             statistic.increaseIterationCount();
             found = true;
-            List<Decision> allNeighbor = task.getAllNeighbor(currentNode, radiusFoundNeighbor);
-            for (Decision neighbor : allNeighbor) {
+            List<DECISION> allNeighbor = task.getAllNeighbor(currentNode, radiusFoundNeighbor);
+            for (DECISION neighbor : allNeighbor) {
                 if (task.isFirstBetter(neighbor, currentNode)) {
                     currentNode = neighbor;
                     found = false;
@@ -39,7 +40,7 @@ public class HillClimbing extends DecisionMethod {
             }
         } while (found);
 
-        final Decision result = currentNode;
+        final DECISION result = currentNode;
 
         return new ResultTaskInfo(result, statistic);
     }
