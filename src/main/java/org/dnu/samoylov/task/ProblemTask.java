@@ -2,6 +2,7 @@ package org.dnu.samoylov.task;
 
 import org.dnu.samoylov.Decision;
 import org.dnu.samoylov.Objective;
+import org.dnu.samoylov.method.genetic.GeneticAlgorithm;
 
 import java.util.List;
 
@@ -19,4 +20,6 @@ public abstract class ProblemTask<DECISION extends Decision, OBJECTIVE extends O
     public abstract DECISION getRandomDecision();
 
     public abstract long calculateFitness(DECISION decision);
+
+    public abstract GeneticAlgorithm.Pair<DECISION> crossover(DECISION first, DECISION second);
 }
