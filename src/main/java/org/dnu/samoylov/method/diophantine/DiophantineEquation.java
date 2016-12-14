@@ -1,11 +1,13 @@
 package org.dnu.samoylov.method.diophantine;
 
 
+import org.dnu.samoylov.method.genetic.GeneticAlgorithm;
 import org.dnu.samoylov.task.ProblemTask;
 
 import java.util.*;
 
 public class DiophantineEquation extends ProblemTask<DioDecision, DioObjective> {
+    public static int BOUND_OF_SOLUTION = -1;
     private final int[] coefficients;
     private final int[] exponent;
 
@@ -126,14 +128,18 @@ public class DiophantineEquation extends ProblemTask<DioDecision, DioObjective> 
         final DioObjective objective1 = calculateObjective(first);
         final DioObjective objective2 = calculateObjective(second);
 
-        return objective1.getValue() < objective2.getValue();
+        return Math.abs(objective1.getValue()) <  Math.abs(objective2.getValue());
     }
 
     @Override
     public DioDecision getRandomDecision() {
         DioDecision dioDecision = new DioDecision(size);
         for (int i = 0; i < size; i++) {
-            dioDecision.xValues[i] = random.nextInt();
+            if (BOUND_OF_SOLUTION == -1) {
+                dioDecision.xValues[i] = random.nextInt();
+            } else {
+                dioDecision.xValues[i] = random.nextInt(BOUND_OF_SOLUTION) - BOUND_OF_SOLUTION / 2;
+            }
         }
 
         return dioDecision;
@@ -143,6 +149,29 @@ public class DiophantineEquation extends ProblemTask<DioDecision, DioObjective> 
     public long calculateFitness(DioDecision decision) {
         final DioObjective objective = calculateObjective(decision);
         return Math.abs(objective.getValue());
+    }
+
+    @Override
+    public GeneticAlgorithm.Pair<DioDecision> crossover(DioDecision firstD, DioDecision secondD) {
+        DioDecision crossDec = getOneCrossDec(firstD, secondD);
+        DioDecision oneCrossDec2 = getOneCrossDec(firstD, secondD);
+
+        return GeneticAlgorithm.Pair.create(crossDec, oneCrossDec2);
+    }
+
+    private DioDecision getOneCrossDec(DioDecision firstD, DioDecision secondD) {
+        final double alpha = random.nextDouble() * 2 - 0.5D;
+
+        DioDecision dioDecision = new DioDecision(size);
+
+        int[] first = firstD.getxValues();
+        int[] second = secondD.getxValues();
+
+        for (int i = 0; i < size; i++) {
+            dioDecision.xValues[i] = (int) (alpha * (first[i] - second[i]) + first[i]);
+        }
+
+        return dioDecision;
     }
 
 
@@ -173,5 +202,31 @@ public class DiophantineEquation extends ProblemTask<DioDecision, DioObjective> 
     private final class PartOfEquation extends LinkedList<Integer> {
         public PartOfEquation() {
         }
+    }
+
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder("DiophantineEquation {");
+        for (int i = 0; i < size; i++) {
+            result
+                    .append(coefficients[i])
+                    .append("*x")
+                    .append(i)
+                    .append("^")
+                    .append(exponent[i]);
+
+            if (i!=size-1) {
+                result.append(" + ");
+            }
+        }
+
+        result
+                .append(" - ")
+                .append(this.result)
+                .append(" -> min")
+                .append("}");
+
+        return result.toString();
     }
 }

@@ -34,4 +34,10 @@ public class DioDecision extends Decision {
     public int hashCode() {
         return xValues != null ? Arrays.hashCode(xValues) : 0;
     }
+
+    @Override
+    public String toString() {
+        return Arrays.toString(xValues);
+
+    }
 }

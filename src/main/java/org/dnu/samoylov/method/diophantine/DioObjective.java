@@ -12,4 +12,9 @@ public class DioObjective extends Objective {
     public long getValue() {
         return objective;
     }
+
+    @Override
+    public String toString() {
+        return "Diophantine objective = " + objective;
+    }
 }

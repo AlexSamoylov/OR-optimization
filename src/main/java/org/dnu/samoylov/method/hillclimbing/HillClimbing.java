@@ -8,12 +8,19 @@ import org.dnu.samoylov.method.DecisionMethod;
 import org.dnu.samoylov.task.ProblemTask;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 public class HillClimbing extends DecisionMethod {
-    int radiusFoundNeighbor;
 
-    private HillClimbing(int radiusFoundNeighbor) {
+
+    private static final Logger LOGGER = Logger.getLogger(HillClimbing.class.getName());
+
+    private final int radiusFoundNeighbor;
+    private final int maxNumberOfIteration;
+
+    private HillClimbing(int radiusFoundNeighbor, int maxNumberOfIteration) {
         this.radiusFoundNeighbor = radiusFoundNeighbor;
+        this.maxNumberOfIteration = maxNumberOfIteration;
     }
 
     public static Builder newBuilder() {
@@ -25,6 +32,7 @@ public class HillClimbing extends DecisionMethod {
         final HillClimbingStatistic statistic = new HillClimbingStatistic();
 
         DECISION currentNode = task.getRandomDecision();
+        LOGGER.info("start node:" + currentNode);
 
         boolean found;
 
@@ -38,7 +46,7 @@ public class HillClimbing extends DecisionMethod {
                     found = false;
                 }
             }
-        } while (found);
+        } while (!(found || statistic.iterationCount == maxNumberOfIteration));
 
         final DECISION result = currentNode;
 
@@ -55,6 +63,7 @@ public class HillClimbing extends DecisionMethod {
 
     public static class Builder {
         int radiusFoundNeighbor = 1;
+        private int maxNumberOfIteration = -1;
 
         private Builder() {
         }
@@ -64,8 +73,15 @@ public class HillClimbing extends DecisionMethod {
             return this;
         }
 
-        public HillClimbing build() {
-            return new HillClimbing(radiusFoundNeighbor);
+        public Builder setMaxNumberOfIteration(int maxNumberOfIteration) {
+            this.maxNumberOfIteration = maxNumberOfIteration;
+            return this;
         }
+
+        public HillClimbing build() {
+            return new HillClimbing(radiusFoundNeighbor, maxNumberOfIteration);
+        }
+
+
     }
 }

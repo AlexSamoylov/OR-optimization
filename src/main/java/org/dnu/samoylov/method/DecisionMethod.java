@@ -6,13 +6,19 @@ import org.dnu.samoylov.ResultTaskInfo;
 import org.dnu.samoylov.statistic.GlobalWorkStatistic;
 import org.dnu.samoylov.task.ProblemTask;
 
+import java.util.logging.Logger;
+
 public abstract class DecisionMethod {
+
+    private static final Logger log = Logger.getLogger(DecisionMethod.class.getName());
 
     public ResultTaskInfo process(ProblemTask task) {
         final GlobalWorkStatistic workStatistic = new GlobalWorkStatistic();
 
         workStatistic.startEstimationTime();
+        log.info("start internalProcess for" + task);
         ResultTaskInfo resultTaskInfo = internalProcess(task);
+        log.info("end internalProcess for" + task);
         workStatistic.stopEstimationTime();
 
         workStatistic.setSpecificWorkStatistic(resultTaskInfo.getWorkStatistic());

@@ -10,6 +10,7 @@ import org.dnu.samoylov.Objective;
 import org.dnu.samoylov.ResultTaskInfo;
 import org.dnu.samoylov.method.DecisionMethod;
 import org.dnu.samoylov.method.diophantine.DiophantineEquation;
+import org.dnu.samoylov.method.genetic.GeneticAlgorithm;
 import org.dnu.samoylov.method.hillclimbing.HillClimbing;
 import org.dnu.samoylov.statistic.WorkStatistic;
 import org.dnu.samoylov.task.ProblemTask;
@@ -28,11 +29,15 @@ public class Main extends Application {
 
 
     public static void main(String[] args) {
-        final ProblemTask problemTask = new ProblemTaskLoader().load("destination", DiophantineEquation.class);
+        final ProblemTask problemTask = getProblemTaskDemo();
 
-        final DecisionMethod decisionMethod = HillClimbing.newBuilder()
+        final HillClimbing decisionMethodHill = HillClimbing.newBuilder()
                 .setRadiusFoundNeighbor(1)
+                .setMaxNumberOfIteration(100_000)
                 .build();
+
+        final GeneticAlgorithm decisionMethodGenetic = new GeneticAlgorithm();
+        final DecisionMethod decisionMethod = decisionMethodHill;
 
         final ResultTaskInfo taskInfo = decisionMethod.process(problemTask);
 
@@ -44,5 +49,17 @@ public class Main extends Application {
         System.out.println("Result: " + minObjective
                 + "\n\tfor arguments:" + result
                 + "\n\n work statistic:\n" + statistic);
+    }
+
+    private static ProblemTask getProblemTaskDemo() {
+        final int[] coefficients = new int[] {1,1};
+        final int[] exponent = new int[] {1,1};
+        final int result = 10;
+
+        return new DiophantineEquation(coefficients, exponent, result);
+    }
+
+    private static ProblemTask getProblemTaskByPath() {
+        return new ProblemTaskLoader().load("destination", DiophantineEquation.class);
     }
 }

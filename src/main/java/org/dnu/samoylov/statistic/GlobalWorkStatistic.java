@@ -24,7 +24,7 @@ public class GlobalWorkStatistic extends WorkStatistic {
 
     @Override
     public String toString() {
-        return "Time of work: " + getSecondsOfWork() + "second\n"
-                + specificWorkStatistic.toString();
+        return "Time of work: " + getSecondsOfWork() + " second\n"
+                + specificWorkStatistic;
     }
 }
