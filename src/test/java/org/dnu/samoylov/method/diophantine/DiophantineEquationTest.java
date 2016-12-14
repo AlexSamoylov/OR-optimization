@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+
 public class DiophantineEquationTest {
     final DiophantineEquation equation;
 
@@ -47,15 +48,15 @@ public class DiophantineEquationTest {
         final DioDecision decision = new DioDecision(new int[] {4, 4});
         Set<DioDecision> setDecision = new HashSet<>();
         setDecision.addAll(Arrays.asList(
-                new DioDecision(new int[] {3, 3}),
-                new DioDecision(new int[] {3, 4}),
-                new DioDecision(new int[] {3, 5}),
-                new DioDecision(new int[] {4, 3}),
-                new DioDecision(new int[] {4, 4}),
-                new DioDecision(new int[] {4, 5}),
-                new DioDecision(new int[] {5, 3}),
-                new DioDecision(new int[] {5, 4}),
-                new DioDecision(new int[] {5, 5})
+                new DioDecision(new int[]{3, 3}),
+                new DioDecision(new int[]{3, 4}),
+                new DioDecision(new int[]{3, 5}),
+                new DioDecision(new int[]{4, 3}),
+                new DioDecision(new int[]{4, 4}),
+                new DioDecision(new int[]{4, 5}),
+                new DioDecision(new int[]{5, 3}),
+                new DioDecision(new int[]{5, 4}),
+                new DioDecision(new int[]{5, 5})
         ));
 
         final List<DioDecision> allNeighbor = equation.getAllNeighbor(decision, 1);

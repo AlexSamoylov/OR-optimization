@@ -10,7 +10,6 @@ import org.dnu.samoylov.Objective;
 import org.dnu.samoylov.ResultTaskInfo;
 import org.dnu.samoylov.method.DecisionMethod;
 import org.dnu.samoylov.method.diophantine.DiophantineEquation;
-import org.dnu.samoylov.method.diophantine.DiophantineEquationTest;
 import org.dnu.samoylov.method.hillclimbing.HillClimbing;
 import org.dnu.samoylov.statistic.WorkStatistic;
 import org.dnu.samoylov.task.ProblemTask;
@@ -45,17 +44,5 @@ public class Main extends Application {
         System.out.println("Result: " + minObjective
                 + "\n\tfor arguments:" + result
                 + "\n\n work statistic:\n" + statistic);
-    }
-
-
-
-    public static void mainTest(String[] args) throws Exception {
-        DiophantineEquationTest diophantineEquationTest = new DiophantineEquationTest();
-        diophantineEquationTest.testCalculateFitness();
-        diophantineEquationTest.testCalculateObjective();
-        diophantineEquationTest.testGetAllNeighbor();
-        diophantineEquationTest.testGetNeighbor();
-        diophantineEquationTest.testGetRandomDecision();
-        diophantineEquationTest.testIsFirstBetter();
     }
 }
