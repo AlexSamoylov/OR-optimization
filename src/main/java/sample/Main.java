@@ -9,6 +9,7 @@ import org.dnu.samoylov.Decision;
 import org.dnu.samoylov.Objective;
 import org.dnu.samoylov.ResultTaskInfo;
 import org.dnu.samoylov.method.DecisionMethod;
+import org.dnu.samoylov.method.annealing.SimulatedAnnealing;
 import org.dnu.samoylov.method.diophantine.DiophantineEquation;
 import org.dnu.samoylov.method.genetic.GeneticAlgorithm;
 import org.dnu.samoylov.method.hillclimbing.HillClimbing;
@@ -37,7 +38,10 @@ public class Main extends Application {
                 .build();
 
         final GeneticAlgorithm decisionMethodGenetic = new GeneticAlgorithm();
-        final DecisionMethod decisionMethod = decisionMethodHill;
+
+
+        final SimulatedAnnealing decisionSimulatedAnnealing = new SimulatedAnnealing(0, 0.05, 3000, 10, 25 );
+        final DecisionMethod decisionMethod = decisionSimulatedAnnealing;
 
         final ResultTaskInfo taskInfo = decisionMethod.process(problemTask);
 
