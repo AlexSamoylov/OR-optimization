@@ -148,7 +148,7 @@ public class SimulatedAnnealing extends DecisionMethod {
             DECISION randomSolution = problem.getNeighbor(initialSolution, 3);
             long dF = problem.calculateFitness(randomSolution) - problem.calculateFitness(initialSolution);
 
-            if (random.nextDouble() < Math.exp(dF / t)) {
+            if (random.nextDouble() < Math.exp(- dF / t)) {
                 acceptedCounter++;
             } else {
                 rejectedCounter++;
