@@ -1,4 +1,4 @@
-package org.dnu.samoylov.method.diophantine;
+package org.dnu.samoylov.task.diophantine;
 
 import org.junit.Assert;
 import org.junit.Test;

@@ -1,6 +1,6 @@
-package org.dnu.samoylov.statistic;
+package org.dnu.samoylov.method.base.statistic;
 
-public class GlobalWorkStatistic extends WorkStatistic {
+public class GlobalWorkStatistic implements WorkStatistic {
     private WorkStatistic specificWorkStatistic;
 
     long startTime = 0;

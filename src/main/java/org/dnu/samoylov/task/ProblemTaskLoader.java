@@ -1,6 +1,7 @@
 package org.dnu.samoylov.task;
 
-import org.dnu.samoylov.method.diophantine.DiophantineEquation;
+import org.dnu.samoylov.task.base.ProblemTask;
+import org.dnu.samoylov.task.diophantine.DiophantineEquation;
 
 public class ProblemTaskLoader {
 

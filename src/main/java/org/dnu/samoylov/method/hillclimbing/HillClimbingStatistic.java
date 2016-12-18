@@ -1,14 +1,10 @@
 package org.dnu.samoylov.method.hillclimbing;
 
-import org.dnu.samoylov.statistic.WorkStatistic;
+import org.dnu.samoylov.method.base.statistic.WorkStatistic;
 
-import java.util.logging.Logger;
+public class HillClimbingStatistic implements WorkStatistic {
 
-public class HillClimbingStatistic extends WorkStatistic {
-
-    private static final Logger LOGGER = Logger.getLogger(HillClimbingStatistic.class.getName());
-
-    long iterationCount = 0;
+    private long iterationCount = 0;
 
     public void increaseIterationCount() {
         iterationCount++;

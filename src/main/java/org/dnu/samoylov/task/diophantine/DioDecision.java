@@ -1,10 +1,10 @@
-package org.dnu.samoylov.method.diophantine;
+package org.dnu.samoylov.task.diophantine;
 
-import org.dnu.samoylov.Decision;
+import org.dnu.samoylov.task.base.Decision;
 
 import java.util.Arrays;
 
-public class DioDecision extends Decision {
+public class DioDecision implements Decision {
     int[] xValues;
 
     public DioDecision(int size) {

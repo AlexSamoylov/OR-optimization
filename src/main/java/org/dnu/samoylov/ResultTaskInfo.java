@@ -1,6 +1,7 @@
 package org.dnu.samoylov;
 
-import org.dnu.samoylov.statistic.WorkStatistic;
+import org.dnu.samoylov.method.base.statistic.WorkStatistic;
+import org.dnu.samoylov.task.base.Decision;
 
 public class ResultTaskInfo {
     private Decision result;

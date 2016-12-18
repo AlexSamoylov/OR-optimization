@@ -1,13 +1,8 @@
 package org.dnu.samoylov.method.annealing;
 
-import org.dnu.samoylov.statistic.WorkStatistic;
+import org.dnu.samoylov.method.base.statistic.WorkStatistic;
 
-import java.util.logging.Logger;
-
-public class SimulatedAnnealingStatistic extends WorkStatistic {
-
-    private static final Logger LOGGER = Logger.getLogger(SimulatedAnnealingStatistic.class.getName());
-
+public class SimulatedAnnealingStatistic implements WorkStatistic {
     long iterationCount = 0;
 
     public void increaseIterationCount() {

@@ -5,17 +5,17 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.dnu.samoylov.Decision;
-import org.dnu.samoylov.Objective;
 import org.dnu.samoylov.ResultTaskInfo;
-import org.dnu.samoylov.method.DecisionMethod;
 import org.dnu.samoylov.method.annealing.SimulatedAnnealing;
-import org.dnu.samoylov.method.diophantine.DiophantineEquation;
+import org.dnu.samoylov.method.base.DecisionMethod;
+import org.dnu.samoylov.method.base.statistic.WorkStatistic;
 import org.dnu.samoylov.method.genetic.GeneticAlgorithm;
 import org.dnu.samoylov.method.hillclimbing.HillClimbing;
-import org.dnu.samoylov.statistic.WorkStatistic;
-import org.dnu.samoylov.task.ProblemTask;
 import org.dnu.samoylov.task.ProblemTaskLoader;
+import org.dnu.samoylov.task.base.Decision;
+import org.dnu.samoylov.task.base.Objective;
+import org.dnu.samoylov.task.base.ProblemTask;
+import org.dnu.samoylov.task.diophantine.DiophantineEquation;
 
 public class Main extends Application {
 

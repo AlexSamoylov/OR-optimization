@@ -1,8 +1,8 @@
-package org.dnu.samoylov.method.diophantine;
+package org.dnu.samoylov.task.diophantine;
 
-import org.dnu.samoylov.Objective;
+import org.dnu.samoylov.task.base.Objective;
 
-public class DioObjective extends Objective {
+public class DioObjective implements Objective {
     private final long objective;
 
     public DioObjective(long objective) {

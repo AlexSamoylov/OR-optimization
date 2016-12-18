@@ -1,8 +1,8 @@
-package org.dnu.samoylov.method.diophantine;
+package org.dnu.samoylov.task.diophantine;
 
 
 import org.dnu.samoylov.method.genetic.GeneticAlgorithm;
-import org.dnu.samoylov.task.ProblemTask;
+import org.dnu.samoylov.task.base.ProblemTask;
 
 import java.util.*;
 

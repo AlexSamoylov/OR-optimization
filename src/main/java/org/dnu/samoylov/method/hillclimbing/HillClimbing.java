@@ -1,11 +1,11 @@
 package org.dnu.samoylov.method.hillclimbing;
 
 
-import org.dnu.samoylov.Decision;
-import org.dnu.samoylov.Objective;
 import org.dnu.samoylov.ResultTaskInfo;
-import org.dnu.samoylov.method.DecisionMethod;
-import org.dnu.samoylov.task.ProblemTask;
+import org.dnu.samoylov.method.base.DecisionMethod;
+import org.dnu.samoylov.task.base.Decision;
+import org.dnu.samoylov.task.base.Objective;
+import org.dnu.samoylov.task.base.ProblemTask;
 
 import java.util.List;
 import java.util.logging.Logger;

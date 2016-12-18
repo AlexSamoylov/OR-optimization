@@ -1,7 +1,5 @@
-package org.dnu.samoylov.task;
+package org.dnu.samoylov.task.base;
 
-import org.dnu.samoylov.Decision;
-import org.dnu.samoylov.Objective;
 import org.dnu.samoylov.method.genetic.GeneticAlgorithm;
 
 import java.util.List;
