@@ -40,8 +40,8 @@ public class Main extends Application {
                 .build();
 
         final HillClimbingBest decisionMethodHillBest = HillClimbingBest.newBuilder()
-                .setRadiusFoundNeighbor(1000)
-                .setMaxNumberOfIteration(1000000000)
+                .setRadiusFoundNeighbor(10000)
+                .setMaxNumberOfIteration(2_0000_000)
                 .build();
 
         final GeneticAlgorithm decisionMethodGenetic = new GeneticAlgorithm();
@@ -50,7 +50,7 @@ public class Main extends Application {
 
         final ParticleSwarm particleSwarm = new ParticleSwarm();
 
-        final DecisionMethod decisionMethod = decisionMethodHillBest;
+        final DecisionMethod decisionMethod = particleSwarm;
 
         final ResultTaskInfo taskInfo = decisionMethod.process(problemTask);
 

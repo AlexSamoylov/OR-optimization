@@ -3,15 +3,16 @@ package org.dnu.samoylov.task.diophantine;
 
 import org.dnu.samoylov.method.genetic.GeneticAlgorithm;
 import org.dnu.samoylov.method.swarm.SwarmProblemTask;
+import org.dnu.samoylov.task.base.Mediator;
 
 import java.math.BigInteger;
 import java.util.*;
 import java.util.logging.Logger;
 
 public class DiophantineEquation implements SwarmProblemTask<DioDecision, DioObjective> {
-    public static final Logger LOGGER = Logger.getLogger(DiophantineEquation.class.getCanonicalName());
+    public static final Logger LOGGER = Logger.getLogger(DiophantineEquation.class.getSimpleName());
 
-    public static int BOUND_OF_SOLUTION = Integer.MAX_VALUE;
+    public static int BOUND_OF_SOLUTION = 10000;
     private final int[] coefficients;
     private final int[] exponent;
 
@@ -133,7 +134,7 @@ public class DiophantineEquation implements SwarmProblemTask<DioDecision, DioObj
         final DioObjective objective1 = calculateObjective(first);
         final DioObjective objective2 = calculateObjective(second);
 
-        return objective1.getValue().compareTo(objective2.getValue()) > 0;
+        return objective1.getValue().compareTo(objective2.getValue()) < 0;
     }
 
     @Override
@@ -191,65 +192,61 @@ public class DiophantineEquation implements SwarmProblemTask<DioDecision, DioObj
         return variants;
     }
 
-
     @Override
-    public DioDecision sum(DioDecision first, DioDecision second) {
-        int[] result = Arrays.copyOf(first.getxValues(), size);
-        int[] secondValues = second.getxValues();
+    public DioMediator sum(Mediator<DioDecision> firstM, Mediator<DioDecision> secondM) {
+        final DioMediator first = castMediator(firstM);
+        final DioMediator second = castMediator(secondM);
+
+        long[] result = Arrays.copyOf(first.getxValues(), size);
+        long[] secondValues = second.getxValues();
 
         for (int i = 0; i < size; i++) {
-            long extensionVal = result[i];
-            extensionVal += secondValues[i];
-            if (extensionVal > Integer.MAX_VALUE) {
-                result[i] = Integer.MAX_VALUE;
-                LOGGER.info("sum overflow");
-            } else {
-                result[i] = (int) extensionVal;
-            }
+            result[i] += secondValues[i];
         }
 
-        return new DioDecision(result);
+        return new DioMediator(result);
     }
 
     @Override
-    public DioDecision subtract(DioDecision first, DioDecision second) {
-        int[] result = Arrays.copyOf(first.getxValues(), size);
-        int[] secondValues = second.getxValues();
+    public DioMediator subtract(Mediator<DioDecision> firstM, Mediator<DioDecision> secondM) {
+        final DioMediator first = castMediator(firstM);
+        final DioMediator second = castMediator(secondM);
+
+
+        long[] result = Arrays.copyOf(first.getxValues(), size);
+        long[] secondValues = second.getxValues();
 
         for (int i = 0; i < size; i++) {
-            long extensionVal = result[i];
-            extensionVal -= secondValues[i];
-
-            if (extensionVal < Integer.MIN_VALUE) {
-                result[i] = Integer.MIN_VALUE;
-                LOGGER.info("subtract overflow");
-            } else {
-                result[i] = (int) extensionVal;
-            }
+            result[i] -= secondValues[i];
         }
 
-        return new DioDecision(result);
+        return new DioMediator(result);
     }
 
     @Override
-    public DioDecision multiply(DioDecision first, float m) {
-        int[] result = Arrays.copyOf(first.getxValues(), size);
+    public DioMediator multiply(Mediator<DioDecision> firstM, float m) {
+        final DioMediator first = castMediator(firstM);
+
+        long[] result = Arrays.copyOf(first.getxValues(), size);
 
         for (int i = 0; i < size; i++) {
-            long extensionVal = result[i];
-            extensionVal *= m;
-
-            if (extensionVal > Integer.MAX_VALUE) {
-                result[i] = Integer.MAX_VALUE;
-                LOGGER.info("multiply to" + m + " overflow");
-            } else {
-                result[i] = (int) extensionVal;
-            }
+            result[i] *= m;
         }
 
-        return new DioDecision(result);
+        return new DioMediator(result);
     }
 
+    @Override
+    public DioMediator createMediator(DioDecision first) {
+        return new DioMediator(first);
+    }
+
+    private DioMediator castMediator(Mediator<DioDecision> mediator) {
+        if (mediator.getClass() != DioMediator.class) {
+            throw new IllegalArgumentException("for " + DiophantineEquation.class + " mediator must be " + DioMediator.class);
+        }
+        return (DioMediator) mediator;
+    }
     @Override
     public DioDecision createZero() {
         return new DioDecision(new int[size]);
@@ -260,7 +257,6 @@ public class DiophantineEquation implements SwarmProblemTask<DioDecision, DioObj
             super(initialCapacity);
         }
     }
-
 
     private final class NodeVariantsByPosition extends LinkedList<NodeVariants> {
         public NodeVariantsByPosition() {

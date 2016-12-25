@@ -165,9 +165,15 @@ public class SimulatedAnnealing extends DecisionMethod {
                                                                                               double t) {
         BigInteger fitnessForStartSolution = problem.calculateFitness(first);
 
-        long dF =  problem.calculateFitness(second)
-                .subtract(fitnessForStartSolution)
-                .longValueExact();
+        long dF;
+        final BigInteger dFBig = problem.calculateFitness(second)
+                .subtract(fitnessForStartSolution);
+        try {
+            dF = dFBig.longValueExact();
+
+        } catch (ArithmeticException e) {
+            dF = dFBig.signum() > 0? Long.MAX_VALUE : Long.MIN_VALUE;
+        }
 
 
         return random.nextDouble() < Math.exp(-dF / t);

@@ -3,19 +3,24 @@ package org.dnu.samoylov.method.swarm;
 import org.dnu.samoylov.ResultTaskInfo;
 import org.dnu.samoylov.method.base.DecisionMethod;
 import org.dnu.samoylov.task.base.Decision;
+import org.dnu.samoylov.task.base.Mediator;
 import org.dnu.samoylov.task.base.Objective;
 import org.dnu.samoylov.task.base.ProblemTask;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class ParticleSwarm extends DecisionMethod {
+    public static final Logger LOGGER = Logger.getLogger(ParticleSwarm.class.getCanonicalName());
 
-    int swarmSize = 10000;
-    float coefFi1 = 2.3f;
-    float coefFi2 = 2.8f;
-    float coefX = 2f / (coefFi1 + coefFi2);
-    private int timeOfLife = 1_000;
+    int swarmSize = 5;
+    float coefFi1 = 0;
+    float coefFi2 = 2.1f;
+
+    float Fi = coefFi1 + coefFi2;
+    float coefX = (float) (2d / (2 * Fi - Math.sqrt(Math.pow(Fi, 2) - 4 * Fi)));
+    private int timeOfLife = 1_0;
 
 
     @Override
@@ -33,26 +38,34 @@ public class ParticleSwarm extends DecisionMethod {
 
         Swarm<DECISION> swarm = Swarm.create(task, swarmSize);
 
+        LOGGER.info(swarm.toString());
+
         for (int i = 0; i < timeOfLife; i++) {
             for (Chronology<DECISION> x : swarm) {
-                DECISION vLast = task.multiply(x.lastVelocity, coefX);
 
-                DECISION velocityToPersonalBest = task.multiply(
-                        task.subtract(x.personalBest, x.last),
+                Mediator<DECISION> lastVelocity = task.createMediator(x.lastVelocity);
+                Mediator<DECISION> personalBest = task.createMediator(x.personalBest);
+                Mediator<DECISION> globalBest = task.createMediator(x.globalBest);
+                Mediator<DECISION> last = task.createMediator(x.last);
+
+                Mediator<DECISION> vLast = task.multiply(lastVelocity, coefX);
+                Mediator<DECISION> velocityToPersonalBest = task.multiply(
+                        task.subtract(personalBest, last),
                         coefFi1);
 
-                DECISION velocityToGlobalBest = task.multiply(
-                        task.subtract(x.globalBest, x.last),
+                Mediator<DECISION> velocityToGlobalBest = task.multiply(
+                        task.subtract(globalBest, last),
                         coefFi2);
 
-                DECISION newV = task.sum(
+                Mediator<DECISION> newV = task.sum(
                         task.sum(vLast,
                                 velocityToPersonalBest),
                         velocityToGlobalBest
                 );
 
-                DECISION newX = task.sum(x.last, newV);
-                x.lastVelocity = newV;
+                DECISION newX = task.sum(last, newV).extract();
+                x.last = newX;
+                x.lastVelocity = newV.extract();
 
                 if (task.isFirstBetter(newX, x.personalBest)) {
                     x.personalBest = newX;
@@ -66,6 +79,7 @@ public class ParticleSwarm extends DecisionMethod {
             }
         }
 
+        LOGGER.info(swarm.toString());
         DECISION result = swarm.getGlobalBest(task);
         return new ResultTaskInfo(result, null);
     }
@@ -98,7 +112,6 @@ public class ParticleSwarm extends DecisionMethod {
                 }
             }
         }
-
 
         private static <DECISION extends Decision> void setNeighborhood(Swarm<DECISION> swarm) {
             int initialCapacity = swarm.size();
@@ -159,11 +172,9 @@ public class ParticleSwarm extends DecisionMethod {
             this.lastVelocity = task.createZero();
         }
 
-        public DECISION getLast() {
-            return last;
-        }
-        public void updateLast(DECISION newerDecision) {
-            last = newerDecision;
+        @Override
+        public String toString() {
+            return last.toString();
         }
     }
 

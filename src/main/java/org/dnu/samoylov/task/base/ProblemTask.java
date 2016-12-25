@@ -7,17 +7,17 @@ import java.util.List;
 
 public interface ProblemTask<DECISION extends Decision, OBJECTIVE extends Objective> {
 
-    public OBJECTIVE calculateObjective(DECISION decision);
+    OBJECTIVE calculateObjective(DECISION decision);
 
-    public DECISION getNeighbor(DECISION decision, int radius);
+    DECISION getNeighbor(DECISION decision, int radius);
 
-    public List<DECISION> getAllNeighbor(DECISION decision, int radius);
+    List<DECISION> getAllNeighbor(DECISION decision, int radius);
 
-    public boolean isFirstBetter(DECISION first, DECISION second);
+    boolean isFirstBetter(DECISION first, DECISION second);
 
-    public DECISION getRandomDecision();
+    DECISION getRandomDecision();
 
-    public BigInteger calculateFitness(DECISION decision);
+    BigInteger calculateFitness(DECISION decision);
 
-    public GeneticAlgorithm.Pair<DECISION> crossover(DECISION first, DECISION second);
+    GeneticAlgorithm.Pair<DECISION> crossover(DECISION first, DECISION second);
 }
