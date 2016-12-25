@@ -2,12 +2,16 @@ package org.dnu.samoylov.task.diophantine;
 
 
 import org.dnu.samoylov.method.genetic.GeneticAlgorithm;
-import org.dnu.samoylov.task.base.ProblemTask;
+import org.dnu.samoylov.method.swarm.SwarmProblemTask;
 
+import java.math.BigInteger;
 import java.util.*;
+import java.util.logging.Logger;
 
-public class DiophantineEquation extends ProblemTask<DioDecision, DioObjective> {
-    public static int BOUND_OF_SOLUTION = -1;
+public class DiophantineEquation implements SwarmProblemTask<DioDecision, DioObjective> {
+    public static final Logger LOGGER = Logger.getLogger(DiophantineEquation.class.getCanonicalName());
+
+    public static int BOUND_OF_SOLUTION = Integer.MAX_VALUE;
     private final int[] coefficients;
     private final int[] exponent;
 
@@ -24,23 +28,24 @@ public class DiophantineEquation extends ProblemTask<DioDecision, DioObjective> 
 
         this.size = coefficients.length;
         this.result = result;
-
-
     }
 
     @Override
     public DioObjective calculateObjective(DioDecision decision) {
-        long objective = 0;
+        BigInteger objective = BigInteger.valueOf(0);
 
         final int[] x = decision.getxValues();
 
         for (int i = 0; i < size; i++) {
-            objective += Math.pow(x[i], exponent[i]) * coefficients[i];
+            BigInteger val = BigInteger.valueOf(x[i])
+                    .pow(exponent[i])
+                    .multiply(BigInteger.valueOf(coefficients[i]));
+            objective = objective.add(val);
         }
+        objective = objective.subtract(BigInteger.valueOf(result));
+        BigInteger absoluteDistanceToZero = objective.abs();
 
-        objective -= result;
-
-        return new DioObjective(objective);
+        return new DioObjective(absoluteDistanceToZero);
     }
 
     @Override
@@ -128,7 +133,7 @@ public class DiophantineEquation extends ProblemTask<DioDecision, DioObjective> 
         final DioObjective objective1 = calculateObjective(first);
         final DioObjective objective2 = calculateObjective(second);
 
-        return Math.abs(objective1.getValue()) <  Math.abs(objective2.getValue());
+        return objective1.getValue().compareTo(objective2.getValue()) > 0;
     }
 
     @Override
@@ -146,20 +151,20 @@ public class DiophantineEquation extends ProblemTask<DioDecision, DioObjective> 
     }
 
     @Override
-    public long calculateFitness(DioDecision decision) {
+    public BigInteger calculateFitness(DioDecision decision) {
         final DioObjective objective = calculateObjective(decision);
-        return Math.abs(objective.getValue());
+        return objective.getValue();
     }
 
     @Override
     public GeneticAlgorithm.Pair<DioDecision> crossover(DioDecision firstD, DioDecision secondD) {
-        DioDecision crossDec = getOneCrossDec(firstD, secondD);
-        DioDecision oneCrossDec2 = getOneCrossDec(firstD, secondD);
+        DioDecision crossDec = getOneCrossoverDecision(firstD, secondD);
+        DioDecision oneCrossDec2 = getOneCrossoverDecision(firstD, secondD);
 
         return GeneticAlgorithm.Pair.create(crossDec, oneCrossDec2);
     }
 
-    private DioDecision getOneCrossDec(DioDecision firstD, DioDecision secondD) {
+    private DioDecision getOneCrossoverDecision(DioDecision firstD, DioDecision secondD) {
         final double alpha = random.nextDouble() * 2 - 0.5D;
 
         DioDecision dioDecision = new DioDecision(size);
@@ -186,6 +191,69 @@ public class DiophantineEquation extends ProblemTask<DioDecision, DioObjective> 
         return variants;
     }
 
+
+    @Override
+    public DioDecision sum(DioDecision first, DioDecision second) {
+        int[] result = Arrays.copyOf(first.getxValues(), size);
+        int[] secondValues = second.getxValues();
+
+        for (int i = 0; i < size; i++) {
+            long extensionVal = result[i];
+            extensionVal += secondValues[i];
+            if (extensionVal > Integer.MAX_VALUE) {
+                result[i] = Integer.MAX_VALUE;
+                LOGGER.info("sum overflow");
+            } else {
+                result[i] = (int) extensionVal;
+            }
+        }
+
+        return new DioDecision(result);
+    }
+
+    @Override
+    public DioDecision subtract(DioDecision first, DioDecision second) {
+        int[] result = Arrays.copyOf(first.getxValues(), size);
+        int[] secondValues = second.getxValues();
+
+        for (int i = 0; i < size; i++) {
+            long extensionVal = result[i];
+            extensionVal -= secondValues[i];
+
+            if (extensionVal < Integer.MIN_VALUE) {
+                result[i] = Integer.MIN_VALUE;
+                LOGGER.info("subtract overflow");
+            } else {
+                result[i] = (int) extensionVal;
+            }
+        }
+
+        return new DioDecision(result);
+    }
+
+    @Override
+    public DioDecision multiply(DioDecision first, float m) {
+        int[] result = Arrays.copyOf(first.getxValues(), size);
+
+        for (int i = 0; i < size; i++) {
+            long extensionVal = result[i];
+            extensionVal *= m;
+
+            if (extensionVal > Integer.MAX_VALUE) {
+                result[i] = Integer.MAX_VALUE;
+                LOGGER.info("multiply to" + m + " overflow");
+            } else {
+                result[i] = (int) extensionVal;
+            }
+        }
+
+        return new DioDecision(result);
+    }
+
+    @Override
+    public DioDecision createZero() {
+        return new DioDecision(new int[size]);
+    }
 
     private final class NodeVariants extends ArrayList<Integer> {
         public NodeVariants(int initialCapacity) {
@@ -216,7 +284,7 @@ public class DiophantineEquation extends ProblemTask<DioDecision, DioObjective> 
                     .append("^")
                     .append(exponent[i]);
 
-            if (i!=size-1) {
+            if (i != size - 1) {
                 result.append(" + ");
             }
         }

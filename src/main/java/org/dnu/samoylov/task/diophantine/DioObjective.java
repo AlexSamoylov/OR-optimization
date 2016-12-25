@@ -2,15 +2,27 @@ package org.dnu.samoylov.task.diophantine;
 
 import org.dnu.samoylov.task.base.Objective;
 
-public class DioObjective implements Objective {
-    private final long objective;
+import java.math.BigInteger;
+import java.util.Comparator;
+import java.util.logging.Logger;
 
-    public DioObjective(long objective) {
+public class DioObjective implements Objective {
+    public static final Logger LOGGER = Logger.getLogger(DioObjective.class.getCanonicalName());
+
+    private final BigInteger objective;
+    private Comparator<DioObjective> comparing = Comparator.comparing(DioObjective::getValue);
+
+
+    public DioObjective(BigInteger objective) {
         this.objective = objective;
     }
 
-    public long getValue() {
+    public BigInteger getValue() {
         return objective;
+    }
+
+    public Comparator<DioObjective> getComparator() {
+        return comparing;
     }
 
     @Override

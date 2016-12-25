@@ -6,6 +6,7 @@ import org.dnu.samoylov.task.base.Decision;
 import org.dnu.samoylov.task.base.Objective;
 import org.dnu.samoylov.task.base.ProblemTask;
 
+import java.math.BigInteger;
 import java.util.Random;
 
 public class SimulatedAnnealing extends DecisionMethod {
@@ -47,9 +48,9 @@ public class SimulatedAnnealing extends DecisionMethod {
         do {
             statistic.increaseIterationCount();
             final DECISION y = task.getNeighbor(x, ALPHA_RADIUS);
-            long dF = task.calculateFitness(y) - task.calculateFitness(x);
 
-            if (random.nextFloat() < Math.exp(-dF / T)) {
+            boolean calExpFdivT = calcMainFunction(task, y, x, T);
+            if (calExpFdivT) {
                 x = y;
                 acceptedCounter++;
             } else {
@@ -146,9 +147,10 @@ public class SimulatedAnnealing extends DecisionMethod {
 
         for (int i = 0; i < numOfAttempts; i++) {
             DECISION randomSolution = problem.getNeighbor(initialSolution, 3);
-            long dF = problem.calculateFitness(randomSolution) - problem.calculateFitness(initialSolution);
+            boolean accepted = calcMainFunction(problem, initialSolution, randomSolution, t);
 
-            if (random.nextDouble() < Math.exp(- dF / t)) {
+
+            if (accepted) {
                 acceptedCounter++;
             } else {
                 rejectedCounter++;
@@ -156,5 +158,18 @@ public class SimulatedAnnealing extends DecisionMethod {
         }
 
         return (double) acceptedCounter / (acceptedCounter + rejectedCounter);
+    }
+
+    private <DECISION extends Decision, OBJECTIVE extends Objective> boolean calcMainFunction(ProblemTask<DECISION, OBJECTIVE> problem,
+                                                                                              DECISION first, DECISION second,
+                                                                                              double t) {
+        BigInteger fitnessForStartSolution = problem.calculateFitness(first);
+
+        long dF =  problem.calculateFitness(second)
+                .subtract(fitnessForStartSolution)
+                .longValueExact();
+
+
+        return random.nextDouble() < Math.exp(-dF / t);
     }
 }

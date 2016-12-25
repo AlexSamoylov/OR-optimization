@@ -6,6 +6,7 @@ import org.dnu.samoylov.task.base.Decision;
 import org.dnu.samoylov.task.base.Objective;
 import org.dnu.samoylov.task.base.ProblemTask;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Random;
@@ -34,7 +35,8 @@ public class GeneticAlgorithm extends DecisionMethod {
         this.populationSize = populationSize;
         this.countOfIteration = countOfIteration;
         this.rankMap = new ArrayList<>(populationSize);
-        fitnessDecisionComparator = Comparator.comparingLong(x -> x.fitness);
+
+        fitnessDecisionComparator = Comparator.comparing(x -> x.fitness);
         fitnessDecisionComparator = fitnessDecisionComparator.reversed();
     }
 
@@ -161,29 +163,13 @@ public class GeneticAlgorithm extends DecisionMethod {
             this.first = first;
             this.second = second;
         }
-
-        public DECISION getFirst() {
-            return first;
-        }
-
-        public void setFirst(DECISION first) {
-            this.first = first;
-        }
-
-        public DECISION getSecond() {
-            return second;
-        }
-
-        public void setSecond(DECISION second) {
-            this.second = second;
-        }
     }
 
     public final static class FitnessDecision<DECISION extends Decision> {
         private DECISION decision;
-        private long fitness;
+        private BigInteger fitness;
 
-        public FitnessDecision(DECISION decision, long fitness) {
+        public FitnessDecision(DECISION decision, BigInteger fitness) {
             this.decision = decision;
             this.fitness = fitness;
         }
@@ -196,11 +182,11 @@ public class GeneticAlgorithm extends DecisionMethod {
             this.decision = decision;
         }
 
-        public long getFitness() {
+        public BigInteger getFitness() {
             return fitness;
         }
 
-        public void setFitness(long fitness) {
+        public void setFitness(BigInteger fitness) {
             this.fitness = fitness;
         }
 
@@ -209,4 +195,5 @@ public class GeneticAlgorithm extends DecisionMethod {
             return  decision.toString() + "("+fitness+")";
         }
     }
+
 }

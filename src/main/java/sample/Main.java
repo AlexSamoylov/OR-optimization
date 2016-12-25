@@ -11,6 +11,8 @@ import org.dnu.samoylov.method.base.DecisionMethod;
 import org.dnu.samoylov.method.base.statistic.WorkStatistic;
 import org.dnu.samoylov.method.genetic.GeneticAlgorithm;
 import org.dnu.samoylov.method.hillclimbing.HillClimbing;
+import org.dnu.samoylov.method.hillclimbing.HillClimbingBest;
+import org.dnu.samoylov.method.swarm.ParticleSwarm;
 import org.dnu.samoylov.task.ProblemTaskLoader;
 import org.dnu.samoylov.task.base.Decision;
 import org.dnu.samoylov.task.base.Objective;
@@ -33,15 +35,22 @@ public class Main extends Application {
         final ProblemTask problemTask = getProblemTaskDemo();
 
         final HillClimbing decisionMethodHill = HillClimbing.newBuilder()
-                .setRadiusFoundNeighbor(1)
+                .setRadiusFoundNeighbor(1000)
                 .setMaxNumberOfIteration(100_000)
+                .build();
+
+        final HillClimbingBest decisionMethodHillBest = HillClimbingBest.newBuilder()
+                .setRadiusFoundNeighbor(1000)
+                .setMaxNumberOfIteration(1000000000)
                 .build();
 
         final GeneticAlgorithm decisionMethodGenetic = new GeneticAlgorithm();
 
-
         final SimulatedAnnealing decisionSimulatedAnnealing = new SimulatedAnnealing(0, 0.05, 3000, 10, 25 );
-        final DecisionMethod decisionMethod = decisionSimulatedAnnealing;
+
+        final ParticleSwarm particleSwarm = new ParticleSwarm();
+
+        final DecisionMethod decisionMethod = decisionMethodHillBest;
 
         final ResultTaskInfo taskInfo = decisionMethod.process(problemTask);
 
@@ -57,8 +66,8 @@ public class Main extends Application {
 
     private static ProblemTask getProblemTaskDemo() {
         final int[] coefficients = new int[] {1,1};
-        final int[] exponent = new int[] {1,1};
-        final int result = 10;
+        final int[] exponent = new int[] {10,10};
+        final int result = 1356217073;
 
         return new DiophantineEquation(coefficients, exponent, result);
     }
