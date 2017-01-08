@@ -21,36 +21,10 @@ import org.dnu.samoylov.task.diophantine.DiophantineEquation;
 
 public class Main extends Application {
 
-    @Override
-    public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 300, 275));
-        primaryStage.show();
-    }
-
-
-
     public static void main(String[] args) {
         final ProblemTask problemTask = getProblemTaskDemo();
 
-        final HillClimbing decisionMethodHill = HillClimbing.newBuilder()
-                .setRadiusFoundNeighbor(1000)
-                .setMaxNumberOfIteration(100_000)
-                .build();
-
-        final HillClimbingBest decisionMethodHillBest = HillClimbingBest.newBuilder()
-                .setRadiusFoundNeighbor(10000)
-                .setMaxNumberOfIteration(2_0000_000)
-                .build();
-
-        final GeneticAlgorithm decisionMethodGenetic = new GeneticAlgorithm();
-
-        final SimulatedAnnealing decisionSimulatedAnnealing = new SimulatedAnnealing(0, 0.05, 3000, 10, 25 );
-
-        final ParticleSwarm particleSwarm = new ParticleSwarm();
-
-        final DecisionMethod decisionMethod = particleSwarm;
+        final DecisionMethod decisionMethod = getDecisionMethod(DecisionMethodEnum.SimulatedAnnealing);
 
         final ResultTaskInfo taskInfo = decisionMethod.process(problemTask);
 
@@ -64,9 +38,41 @@ public class Main extends Application {
                 + "\n\n work statistic:\n" + statistic);
     }
 
+    private static DecisionMethod getDecisionMethod(DecisionMethodEnum cl) {
+        DecisionMethod decisionMethod;
+
+        switch (cl) {
+            case HillClimbing:
+                decisionMethod = HillClimbing.newBuilder()
+                        .setRadiusFoundNeighbor(1000)
+                        .setMaxNumberOfIteration(100_000)
+                        .build();
+                break;
+            case HillClimbingBest:
+                decisionMethod = HillClimbingBest.newBuilder()
+                        .setRadiusFoundNeighbor(10000)
+                        .setMaxNumberOfIteration(10_000_000)
+                        .build();
+                break;
+            case GeneticAlgorithm:
+                decisionMethod = new GeneticAlgorithm();
+                break;
+            case SimulatedAnnealing:
+                decisionMethod = new SimulatedAnnealing(0, 0.10, 10);
+                break;
+            case ParticleSwarm:
+                decisionMethod = new ParticleSwarm();
+                break;
+            default:
+                throw new IllegalArgumentException("not supported DecisionMethodEnum");
+        }
+
+        return decisionMethod;
+    }
+
     private static ProblemTask getProblemTaskDemo() {
-        final int[] coefficients = new int[] {1,1};
-        final int[] exponent = new int[] {10,10};
+        final int[] coefficients = new int[]{1, 1};
+        final int[] exponent = new int[]{10, 10};
         final int result = 1356217073;
 
         return new DiophantineEquation(coefficients, exponent, result);
@@ -74,5 +80,17 @@ public class Main extends Application {
 
     private static ProblemTask getProblemTaskByPath() {
         return new ProblemTaskLoader().load("destination", DiophantineEquation.class);
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
+        primaryStage.setTitle("Hello World");
+        primaryStage.setScene(new Scene(root, 300, 275));
+        primaryStage.show();
+    }
+
+    private enum DecisionMethodEnum {
+        HillClimbing, HillClimbingBest, GeneticAlgorithm, SimulatedAnnealing, ParticleSwarm
     }
 }
