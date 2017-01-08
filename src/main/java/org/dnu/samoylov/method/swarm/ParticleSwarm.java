@@ -9,19 +9,22 @@ import org.dnu.samoylov.task.base.ProblemTask;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Logger;
 
 public class ParticleSwarm extends DecisionMethod {
     public static final Logger LOGGER = Logger.getLogger(ParticleSwarm.class.getCanonicalName());
 
-    int swarmSize = 5;
-    float coefFi1 = 0;
+    int swarmSize = 20;
+    float coefFi1 = 2.0f;
     float coefFi2 = 2.1f;
 
     float Fi = coefFi1 + coefFi2;
     float coefX = (float) (2d / (2 * Fi - Math.sqrt(Math.pow(Fi, 2) - 4 * Fi)));
-    private int timeOfLife = 1_0;
 
+    private int timeOfLife = 5_000;
+
+    Random random = new Random();
 
     @Override
     protected <DECISION extends Decision, OBJECTIVE extends Objective> ResultTaskInfo internalProcess(ProblemTask<DECISION, OBJECTIVE> startTask) {
@@ -32,15 +35,13 @@ public class ParticleSwarm extends DecisionMethod {
 
         SwarmProblemTask<DECISION, OBJECTIVE> task = (SwarmProblemTask<DECISION, OBJECTIVE>) startTask;
 
-        //evaluate
-        //compare topological neighborhood
-        //imitate monkey see, monkey do
-
         Swarm<DECISION> swarm = Swarm.create(task, swarmSize);
 
         LOGGER.info(swarm.toString());
 
+
         for (int i = 0; i < timeOfLife; i++) {
+//            LOGGER.info(swarm.toString());
             for (Chronology<DECISION> x : swarm) {
 
                 Mediator<DECISION> lastVelocity = task.createMediator(x.lastVelocity);
@@ -51,11 +52,11 @@ public class ParticleSwarm extends DecisionMethod {
                 Mediator<DECISION> vLast = task.multiply(lastVelocity, coefX);
                 Mediator<DECISION> velocityToPersonalBest = task.multiply(
                         task.subtract(personalBest, last),
-                        coefFi1);
+                        coefFi1 * random.nextFloat());
 
                 Mediator<DECISION> velocityToGlobalBest = task.multiply(
                         task.subtract(globalBest, last),
-                        coefFi2);
+                        coefFi2 * random.nextFloat());
 
                 Mediator<DECISION> newV = task.sum(
                         task.sum(vLast,
@@ -67,8 +68,8 @@ public class ParticleSwarm extends DecisionMethod {
                 x.last = newX;
                 x.lastVelocity = newV.extract();
 
-                if (task.isFirstBetter(newX, x.personalBest)) {
-                    x.personalBest = newX;
+                if (task.isFirstBetter(x.last, x.personalBest)) {
+                    x.personalBest = x.last;
 
                     for (Chronology<DECISION> y : x.topologyNeighborhood) {
                         if (task.isFirstBetter(x.personalBest, y.globalBest)) {
