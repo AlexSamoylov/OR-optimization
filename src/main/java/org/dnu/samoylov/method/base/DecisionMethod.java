@@ -23,7 +23,7 @@ public abstract class DecisionMethod {
 
         workStatistic.setSpecificWorkStatistic(resultTaskInfo.getWorkStatistic());
 
-        return new ResultTaskInfo(resultTaskInfo.getResult(), workStatistic);
+        return new ResultTaskInfo(resultTaskInfo.getNameOfOptimizationMethod(), resultTaskInfo.getResult(), workStatistic);
     }
 
     protected abstract <DECISION extends Decision, OBJECTIVE extends Objective> ResultTaskInfo internalProcess(ProblemTask<DECISION, OBJECTIVE> task);

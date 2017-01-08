@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 public class DiophantineEquation implements SwarmProblemTask<DioDecision, DioObjective> {
     public static final Logger LOGGER = Logger.getLogger(DiophantineEquation.class.getSimpleName());
 
-    public static int BOUND_OF_SOLUTION = 10000;
+    public static int BOUND_OF_SOLUTION = -1;
     private final int[] coefficients;
     private final int[] exponent;
 

@@ -90,7 +90,7 @@ public class SimulatedAnnealing extends DecisionMethod {
 
         final DECISION result = currentBest;
 
-        return new ResultTaskInfo(result, statistic);
+        return new ResultTaskInfo(getClass().getSimpleName(), result, statistic);
     }
 
 

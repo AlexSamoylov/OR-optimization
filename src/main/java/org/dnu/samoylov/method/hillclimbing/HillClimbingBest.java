@@ -14,7 +14,8 @@ public class HillClimbingBest extends DecisionMethod {
 
     private static final Logger LOGGER = Logger.getLogger(HillClimbingBest.class.getName());
 
-    private final int radiusFoundNeighbor;
+    private int radiusFoundNeighbor;
+
     private final int maxNumberOfIteration;
 
     private HillClimbingBest(int radiusFoundNeighbor, int maxNumberOfIteration) {
@@ -37,6 +38,12 @@ public class HillClimbingBest extends DecisionMethod {
         do {
             statistic.increaseIterationCount();
 
+            if (statistic.iterationCount == maxNumberOfIteration / 2
+                    || statistic.iterationCount == maxNumberOfIteration * 3 / 4
+                    || statistic.iterationCount == maxNumberOfIteration * 4 / 5) {
+                radiusFoundNeighbor /= 4;
+            }
+            
             DECISION neighbor = task.getNeighbor(currentNode, radiusFoundNeighbor);
             if (task.isFirstBetter(neighbor, currentNode)) {
                 currentNode = neighbor;
@@ -46,8 +53,11 @@ public class HillClimbingBest extends DecisionMethod {
 
         final DECISION result = currentNode;
 
-        return new ResultTaskInfo(result, statistic);
+        return new ResultTaskInfo(getClass().getSimpleName(), result, statistic);
     }
+    
+    
+    
 
 
 

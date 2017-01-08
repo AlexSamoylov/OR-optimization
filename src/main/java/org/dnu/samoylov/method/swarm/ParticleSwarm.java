@@ -22,6 +22,10 @@ public class ParticleSwarm extends DecisionMethod {
     float Fi = coefFi1 + coefFi2;
     float coefX = (float) (2d / (2 * Fi - Math.sqrt(Math.pow(Fi, 2) - 4 * Fi)));
 
+    public ParticleSwarm(int timeOfLife) {
+        this.timeOfLife = timeOfLife;
+    }
+
     private int timeOfLife = 5_000;
 
     Random random = new Random();
@@ -41,7 +45,6 @@ public class ParticleSwarm extends DecisionMethod {
 
 
         for (int i = 0; i < timeOfLife; i++) {
-//            LOGGER.info(swarm.toString());
             for (Chronology<DECISION> x : swarm) {
 
                 Mediator<DECISION> lastVelocity = task.createMediator(x.lastVelocity);
@@ -82,7 +85,7 @@ public class ParticleSwarm extends DecisionMethod {
 
         LOGGER.info(swarm.toString());
         DECISION result = swarm.getGlobalBest(task);
-        return new ResultTaskInfo(result, null);
+        return new ResultTaskInfo(getClass().getSimpleName(), result, null);
     }
 
 

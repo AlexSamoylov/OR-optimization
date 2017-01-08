@@ -28,7 +28,7 @@ public class GeneticAlgorithm extends DecisionMethod {
     private Comparator<FitnessDecision> fitnessDecisionComparator;
 
     public GeneticAlgorithm() {
-        this(100, 140000);//9485
+        this(100, 1_500_000);
     }
 
     public GeneticAlgorithm(int populationSize, int countOfIteration) {
@@ -67,7 +67,7 @@ public class GeneticAlgorithm extends DecisionMethod {
         final DECISION result = population.get(population.size()-1).decision;
 
         log.info(population.toString());
-        return new ResultTaskInfo(result, statistic);
+        return new ResultTaskInfo(getClass().getSimpleName(), result, statistic);
     }
 
 
