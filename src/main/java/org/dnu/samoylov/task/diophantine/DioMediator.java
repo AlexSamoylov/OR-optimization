@@ -36,20 +36,12 @@ public class DioMediator implements Mediator<DioDecision> {
         final int[] ints = new int[xValues.length];
 
         for (int i = 0; i <ints.length; i++) {
-            if (xValues[i] > Integer.MAX_VALUE) {
-                ints[i] = Integer.MAX_VALUE;
-                LOGGER.info("extract max overflow");
-
-            } else if (xValues[i] < Integer.MIN_VALUE) {
-                ints[i] = Integer.MIN_VALUE;
-                LOGGER.info("extract min overflow");
-            } else {
-                ints[i] = (int) xValues[i];
-            }
+            ints[i] = (int) (xValues[i] % Integer.MAX_VALUE);
         }
 
         return new DioDecision(ints);
     }
+
 
     @Override
     public String toString() {
