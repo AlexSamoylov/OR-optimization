@@ -11,20 +11,20 @@ import java.util.Random;
 
 public class SimulatedAnnealing extends DecisionMethod {
 
-    private static final int ALPHA_RADIUS = 1000;
+    private int ALPHA_RADIUS = 1000;
+    public static final int NUM_OF_ATTEMPTS = 1000;
     private double initalT;
 
     private final Random random = new Random();
     private final double coolingAlpha;
-    private final long numberOfAttempts;
-    private final int numberOfAttemptsMultiplier;
     private final int exitConst;
 
-    public SimulatedAnnealing(double initalT, double coolingAlpha, long numberOfAttempts, int numberOfAttemptsMultiplier, int exitConst) {
+    /**
+     * @param initalT if == 0 than calculate default initial temperature
+     */
+    public SimulatedAnnealing(double initalT, double coolingAlpha, int exitConst) {
         this.initalT = initalT;
         this.coolingAlpha = coolingAlpha;
-        this.numberOfAttempts = numberOfAttempts;
-        this.numberOfAttemptsMultiplier = numberOfAttemptsMultiplier;
         this.exitConst = exitConst;
     }
 
@@ -33,12 +33,12 @@ public class SimulatedAnnealing extends DecisionMethod {
     protected <DECISION extends Decision, OBJECTIVE extends Objective> ResultTaskInfo internalProcess(ProblemTask<DECISION, OBJECTIVE> task) {
         SimulatedAnnealingStatistic statistic = new SimulatedAnnealingStatistic();
 
-        DECISION x = task.getRandomDecision();
+        DECISION currentBest = task.getRandomDecision();
         double T = initalT;
         int rejQuasInRaw = 0;
 
         if (T == 0) {
-            T = calculateInitialTemperature(task, x, 1000);
+            T = calculateInitialTemperature(task, currentBest, NUM_OF_ATTEMPTS);
         }
 
         int acceptedCounter = 0;
@@ -47,11 +47,11 @@ public class SimulatedAnnealing extends DecisionMethod {
         boolean finished = false;
         do {
             statistic.increaseIterationCount();
-            final DECISION y = task.getNeighbor(x, ALPHA_RADIUS);
+            final DECISION candidate = task.getNeighbor(currentBest, ALPHA_RADIUS);
 
-            boolean calExpFdivT = calcMainFunction(task, y, x, T);
+            boolean calExpFdivT = calcMainFunction(task, currentBest, candidate, T);
             if (calExpFdivT) {
-                x = y;
+                currentBest = candidate;
                 acceptedCounter++;
             } else {
                 rejectedCounter++;
@@ -68,6 +68,11 @@ public class SimulatedAnnealing extends DecisionMethod {
                 }
 
                 case -1: {
+                    if (rejQuasInRaw + 1 == exitConst / 2
+                            || rejQuasInRaw + 1 == exitConst * 3 / 4
+                            || rejQuasInRaw + 1 == exitConst * 4 / 5) {
+                        ALPHA_RADIUS /= 4;
+                    }
                     if (rejQuasInRaw + 1 == exitConst) {
                         finished = true;
                     } else {
@@ -83,17 +88,17 @@ public class SimulatedAnnealing extends DecisionMethod {
         } while (!finished);
 
 
-        final DECISION result = x;
+        final DECISION result = currentBest;
 
         return new ResultTaskInfo(result, statistic);
     }
 
 
     private int quasiEquilibriumReached(long acceptedCounter, long rejectedCounter) {
-        if (acceptedCounter == numberOfAttempts) {
+        if (acceptedCounter == ALPHA_RADIUS) {
             return 1;
         }
-        if (rejectedCounter == numberOfAttemptsMultiplier * numberOfAttempts) {
+        if (rejectedCounter == 2 * ALPHA_RADIUS) {
             return -1;
         }
         return 0;
@@ -161,18 +166,22 @@ public class SimulatedAnnealing extends DecisionMethod {
     }
 
     private <DECISION extends Decision, OBJECTIVE extends Objective> boolean calcMainFunction(ProblemTask<DECISION, OBJECTIVE> problem,
-                                                                                              DECISION first, DECISION second,
+                                                                                              DECISION oldDecision, DECISION newDecision,
                                                                                               double t) {
-        BigInteger fitnessForStartSolution = problem.calculateFitness(first);
+        BigInteger fitnessForStartSolution = problem.calculateFitness(oldDecision);
 
         long dF;
-        final BigInteger dFBig = problem.calculateFitness(second)
+        final BigInteger dFBig = problem.calculateFitness(newDecision)
                 .subtract(fitnessForStartSolution);
         try {
             dF = dFBig.longValueExact();
 
         } catch (ArithmeticException e) {
-            dF = dFBig.signum() > 0? Long.MAX_VALUE : Long.MIN_VALUE;
+            if (dFBig.signum() > 0) {
+                return false;
+            }  else {
+                return true;
+            }
         }
 
 
