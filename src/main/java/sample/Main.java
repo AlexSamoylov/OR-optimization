@@ -22,9 +22,9 @@ import org.dnu.samoylov.task.diophantine.DiophantineEquation;
 public class Main extends Application {
 
     public static void main(String[] args) {
-        final ProblemTask problemTask = getProblemTaskDemo();
+        final ProblemTask problemTask = getManyVarTaskDemo();
 
-        final DecisionMethod decisionMethod = getDecisionMethod(DecisionMethodEnum.SimulatedAnnealing);
+        final DecisionMethod decisionMethod = getDecisionMethod(DecisionMethodEnum.GeneticAlgorithm);
 
         final ResultTaskInfo taskInfo = decisionMethod.process(problemTask);
 
@@ -33,7 +33,8 @@ public class Main extends Application {
 
         final Objective minObjective = problemTask.calculateObjective(result);
 
-        System.out.println("Result: " + minObjective
+        System.out.println("method: " + taskInfo.getNameOfOptimizationMethod()
+                + "\nresult: " + minObjective
                 + "\n\tfor arguments:" + result
                 + "\n\n work statistic:\n" + statistic);
     }
@@ -42,26 +43,26 @@ public class Main extends Application {
         DecisionMethod decisionMethod;
 
         switch (cl) {
-            case HillClimbing:
+            case HillClimbing: // deprecated
                 decisionMethod = HillClimbing.newBuilder()
                         .setRadiusFoundNeighbor(1000)
                         .setMaxNumberOfIteration(100_000)
                         .build();
                 break;
-            case HillClimbingBest:
+            case HillClimbingBest://not bad
                 decisionMethod = HillClimbingBest.newBuilder()
                         .setRadiusFoundNeighbor(10000)
                         .setMaxNumberOfIteration(10_000_000)
                         .build();
                 break;
-            case GeneticAlgorithm:
-                decisionMethod = new GeneticAlgorithm();
+            case GeneticAlgorithm://good
+                decisionMethod = new GeneticAlgorithm(100, 2_500_000);
                 break;
-            case SimulatedAnnealing:
+            case SimulatedAnnealing: //not bad
                 decisionMethod = new SimulatedAnnealing(0, 0.10, 10);
                 break;
             case ParticleSwarm:
-                decisionMethod = new ParticleSwarm();
+                decisionMethod = new ParticleSwarm(100_000); //good
                 break;
             default:
                 throw new IllegalArgumentException("not supported DecisionMethodEnum");
@@ -70,10 +71,44 @@ public class Main extends Application {
         return decisionMethod;
     }
 
-    private static ProblemTask getProblemTaskDemo() {
+    //todo
+        private static ProblemTask getMediumCoeffVarTaskDemo() { //3, 40, 6
+        final int[] coefficients = new int[]{2, 6, 1};
+        final int[] exponent = new int[]    {2, 3, 2};
+        final int result = 1825;
+
+        return new DiophantineEquation(coefficients, exponent, result);
+    }
+
+    //todo
+    private static ProblemTask getCoeffVarTaskDemo() { //5, 15, 25, 35, 4
+        final int[] coefficients = new int[]{5, 9, 3, 7, 2};
+        final int[] exponent = new int[]    {5, 3, 2, 2, 2};
+        final int result = 60500;
+
+        return new DiophantineEquation(coefficients, exponent, result);
+    }
+
+    private static ProblemTask getManyVarTaskDemo() { //12, 6, 6, 7, 4, 5, 12
+        final int[] coefficients = new int[]{1, 1, 1, 1, 1, 1, 1};
+        final int[] exponent = new int[]    {2, 2, 2, 2, 2, 2, 2};
+        final int result = 450;
+
+        return new DiophantineEquation(coefficients, exponent, result);
+    }
+
+    private static ProblemTask getPowTenDemo() { //7, 8
         final int[] coefficients = new int[]{1, 1};
         final int[] exponent = new int[]{10, 10};
         final int result = 1356217073;
+
+        return new DiophantineEquation(coefficients, exponent, result);
+    }
+
+    private static ProblemTask getEazyTask() { //0, 10
+        final int[] coefficients = new int[]{1, 1};
+        final int[] exponent = new int[]{1, 1};
+        final int result = 10;
 
         return new DiophantineEquation(coefficients, exponent, result);
     }
