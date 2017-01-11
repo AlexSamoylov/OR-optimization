@@ -24,7 +24,7 @@ public class Main extends Application {
     public static void main(String[] args) {
         final ProblemTask problemTask = getManyVarTaskDemo();
 
-        final DecisionMethod decisionMethod = getDecisionMethod(DecisionMethodEnum.GeneticAlgorithm);
+        final DecisionMethod decisionMethod = getDecisionMethod(DecisionMethodEnum.HillClimbingBest);
 
         final ResultTaskInfo taskInfo = decisionMethod.process(problemTask);
 
@@ -56,7 +56,7 @@ public class Main extends Application {
                         .build();
                 break;
             case GeneticAlgorithm://good
-                decisionMethod = new GeneticAlgorithm(100, 2_500_000);
+                decisionMethod = new GeneticAlgorithm(100, 1_500_000);
                 break;
             case SimulatedAnnealing: //not bad
                 decisionMethod = new SimulatedAnnealing(0, 0.10, 10);
@@ -72,7 +72,7 @@ public class Main extends Application {
     }
 
     //todo
-        private static ProblemTask getMediumCoeffVarTaskDemo() { //3, 40, 6
+        private static ProblemTask getMediumCoeffVarTaskDemo() { //3, 40, 6 | 30, 0, -5
         final int[] coefficients = new int[]{2, 6, 1};
         final int[] exponent = new int[]    {2, 3, 2};
         final int result = 1825;

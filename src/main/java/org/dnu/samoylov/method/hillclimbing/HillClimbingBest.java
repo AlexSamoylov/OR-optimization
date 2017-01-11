@@ -41,7 +41,7 @@ public class HillClimbingBest extends DecisionMethod {
             if (statistic.iterationCount == maxNumberOfIteration / 2
                     || statistic.iterationCount == maxNumberOfIteration * 3 / 4
                     || statistic.iterationCount == maxNumberOfIteration * 4 / 5) {
-                radiusFoundNeighbor /= 4;
+                radiusFoundNeighbor = radiusFoundNeighbor / 4 + 1;
             }
             
             DECISION neighbor = task.getNeighbor(currentNode, radiusFoundNeighbor);

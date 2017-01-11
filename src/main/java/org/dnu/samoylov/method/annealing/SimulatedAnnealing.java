@@ -71,7 +71,7 @@ public class SimulatedAnnealing extends DecisionMethod {
                     if (rejQuasInRaw + 1 == exitConst / 2
                             || rejQuasInRaw + 1 == exitConst * 3 / 4
                             || rejQuasInRaw + 1 == exitConst * 4 / 5) {
-                        ALPHA_RADIUS /= 4;
+                        ALPHA_RADIUS = ALPHA_RADIUS / 4 + 1;
                     }
                     if (rejQuasInRaw + 1 == exitConst) {
                         finished = true;
