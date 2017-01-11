@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 public class DiophantineEquation implements SwarmProblemTask<DioDecision, DioObjective> {
     public static final Logger LOGGER = Logger.getLogger(DiophantineEquation.class.getSimpleName());
 
-    public static int BOUND_OF_SOLUTION = -1;
+    public static int BOUND_OF_SOLUTION = -1; //Short.MAX_VALUE;
     private final int[] coefficients;
     private final int[] exponent;
 
@@ -174,7 +174,19 @@ public class DiophantineEquation implements SwarmProblemTask<DioDecision, DioObj
         int[] second = secondD.getxValues();
 
         for (int i = 0; i < size; i++) {
-            dioDecision.xValues[i] = (int) (alpha * (first[i] - second[i]) + first[i]);
+
+            Long tmpExtLong = (long) (alpha * (first[i] - second[i]) + first[i]);
+
+
+            if (tmpExtLong > Integer.MAX_VALUE) {
+                dioDecision.xValues[i] = Integer.MAX_VALUE;
+            } else
+            if (tmpExtLong < Integer.MIN_VALUE) {
+                dioDecision.xValues[i] = Integer.MIN_VALUE;
+            } else {
+                dioDecision.xValues[i] = tmpExtLong.intValue();
+            }
+
         }
 
         return dioDecision;

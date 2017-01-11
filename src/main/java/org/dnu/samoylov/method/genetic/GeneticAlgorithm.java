@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 
 public class GeneticAlgorithm extends DecisionMethod {
     public static final double MUTATION_RATE = 0.05;
-    private static final int MUTATION_ALPHA_RADIUS = 10;
+    private static final int MUTATION_ALPHA_RADIUS = 100;
 
 
 
@@ -26,10 +26,6 @@ public class GeneticAlgorithm extends DecisionMethod {
     ArrayList<Integer> rankMap;
     private final Random random = new Random();
     private Comparator<FitnessDecision> fitnessDecisionComparator;
-
-    public GeneticAlgorithm() {
-        this(100, 1_500_000);
-    }
 
     public GeneticAlgorithm(int populationSize, int countOfIteration) {
         this.populationSize = populationSize;
@@ -60,7 +56,8 @@ public class GeneticAlgorithm extends DecisionMethod {
             final FitnessDecision<DECISION> fitnessDecision1 = calculateFitness(task, mutationChild.first);
             final FitnessDecision<DECISION> fitnessDecision2 = calculateFitness(task, mutationChild.second);
 
-            replacement(population, fitnessDecision1, fitnessDecision2);
+            replacement(population, fitnessDecision1, fitnessDecision2, sumOfRank);
+
         } while ( --futureNumberIteration != 0 );
 
         population.sort(fitnessDecisionComparator);
@@ -69,6 +66,7 @@ public class GeneticAlgorithm extends DecisionMethod {
         log.info(population.toString());
         return new ResultTaskInfo(getClass().getSimpleName(), result, statistic);
     }
+
 
 
     private <DECISION extends Decision> ArrayList<FitnessDecision<DECISION>> generatePopulation(final ProblemTask<DECISION, ?> task, int populationSize) {
@@ -86,8 +84,11 @@ public class GeneticAlgorithm extends DecisionMethod {
 
         population.sort(fitnessDecisionComparator);
 
-        DECISION first = getRankedRandomDecision(population, sumOfRank);
-        DECISION second = getRankedRandomDecision(population, sumOfRank);
+        int topIndex1 = getTopIndex(sumOfRank);
+        int topIndex2 = getTopIndex(sumOfRank, topIndex1);
+
+        DECISION first = population.get(topIndex1).decision;
+        DECISION second = population.get(topIndex2).decision;
 
         return Pair.create(first, second);
     }
@@ -115,15 +116,43 @@ public class GeneticAlgorithm extends DecisionMethod {
         population.set(1, fitnessDecision2);
     }
 
+    private <DECISION extends Decision> void replacement(ArrayList<FitnessDecision<DECISION>> population, FitnessDecision<DECISION> fitnessDecision1, FitnessDecision<DECISION> fitnessDecision2, int sumOfRank) {
+        population.sort(fitnessDecisionComparator);
+
+        int bottomIndex1 = getBottomIndex(sumOfRank);
+        int bottomIndex2 = getBottomIndex(sumOfRank, bottomIndex1);
+
+        population.set(bottomIndex1, fitnessDecision1);
+        population.set(bottomIndex2, fitnessDecision2);
+    }
+
+    private int getBottomIndex(int sumOfRank, int disallowedIndex) {
+        int topIndex = getTopIndex(sumOfRank, disallowedIndex);
+        return populationSize - 1 - topIndex;
+    }
+
+    private int getBottomIndex(int sumOfRank) {
+        return getBottomIndex(sumOfRank, -1);
+    }
+
+    private int getTopIndex(int sumOfRank, int disallowedIndex) {
+        int topIndex;
+
+        do {
+            topIndex = getTopIndex(sumOfRank);
+        } while (topIndex == disallowedIndex);
+
+        return topIndex;
+    }
+
+    private int getTopIndex(int sumOfRank) {
+        return indexNodeByRank(random.nextInt(sumOfRank));
+    }
+
+
 
     private <DECISION extends Decision, OBJECTIVE extends Objective> FitnessDecision<DECISION> calculateFitness(ProblemTask<DECISION, OBJECTIVE> task, DECISION decision) {
         return new FitnessDecision<>(decision, task.calculateFitness(decision));
-    }
-
-    private <DECISION extends Decision> DECISION getRankedRandomDecision(ArrayList<FitnessDecision<DECISION>> population, int sumOfRank) {
-        final int rank = random.nextInt(sumOfRank);
-        int indexNode = indexNodeByRank(rank);
-        return population.get(indexNode).decision;
     }
 
     private int indexNodeByRank(int rank) {
