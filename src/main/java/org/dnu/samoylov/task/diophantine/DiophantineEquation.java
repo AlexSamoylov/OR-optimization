@@ -12,7 +12,9 @@ import java.util.logging.Logger;
 public class DiophantineEquation implements SwarmProblemTask<DioDecision, DioObjective> {
     public static final Logger LOGGER = Logger.getLogger(DiophantineEquation.class.getSimpleName());
 
-    public static int BOUND_OF_SOLUTION = -1; //Short.MAX_VALUE;
+    public static int BOTTOM_BOUND_OF_SOLUTION = 0;
+    public static int TOP_BOUND_OF_SOLUTION = 1000;// Short.MAX_VALUE;
+
     private final int[] coefficients;
     private final int[] exponent;
 
@@ -141,11 +143,7 @@ public class DiophantineEquation implements SwarmProblemTask<DioDecision, DioObj
     public DioDecision getRandomDecision() {
         DioDecision dioDecision = new DioDecision(size);
         for (int i = 0; i < size; i++) {
-            if (BOUND_OF_SOLUTION == -1) {
-                dioDecision.xValues[i] = random.nextInt();
-            } else {
-                dioDecision.xValues[i] = random.nextInt(BOUND_OF_SOLUTION) - BOUND_OF_SOLUTION / 2;
-            }
+            dioDecision.xValues[i] = BOTTOM_BOUND_OF_SOLUTION + random.nextInt(TOP_BOUND_OF_SOLUTION - BOTTOM_BOUND_OF_SOLUTION);
         }
 
         return dioDecision;
@@ -180,8 +178,7 @@ public class DiophantineEquation implements SwarmProblemTask<DioDecision, DioObj
 
             if (tmpExtLong > Integer.MAX_VALUE) {
                 dioDecision.xValues[i] = Integer.MAX_VALUE;
-            } else
-            if (tmpExtLong < Integer.MIN_VALUE) {
+            } else if (tmpExtLong < Integer.MIN_VALUE) {
                 dioDecision.xValues[i] = Integer.MIN_VALUE;
             } else {
                 dioDecision.xValues[i] = tmpExtLong.intValue();
@@ -259,6 +256,7 @@ public class DiophantineEquation implements SwarmProblemTask<DioDecision, DioObj
         }
         return (DioMediator) mediator;
     }
+
     @Override
     public DioDecision createZero() {
         return new DioDecision(new int[size]);

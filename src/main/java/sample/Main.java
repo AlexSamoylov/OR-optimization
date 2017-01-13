@@ -22,9 +22,9 @@ import org.dnu.samoylov.task.diophantine.DiophantineEquation;
 public class Main extends Application {
 
     public static void main(String[] args) {
-        final ProblemTask problemTask = getManyVarTaskDemo();
+        final ProblemTask problemTask = getMediumCoeffVarTaskDemo();
 
-        final DecisionMethod decisionMethod = getDecisionMethod(DecisionMethodEnum.HillClimbingBest);
+        final DecisionMethod decisionMethod = getDecisionMethod(DecisionMethodEnum.ParticleSwarm);
 
         final ResultTaskInfo taskInfo = decisionMethod.process(problemTask);
 
@@ -51,12 +51,12 @@ public class Main extends Application {
                 break;
             case HillClimbingBest://not bad
                 decisionMethod = HillClimbingBest.newBuilder()
-                        .setRadiusFoundNeighbor(10000)
+                        .setRadiusFoundNeighbor(1000)
                         .setMaxNumberOfIteration(10_000_000)
                         .build();
                 break;
             case GeneticAlgorithm://good
-                decisionMethod = new GeneticAlgorithm(100, 1_500_000);
+                decisionMethod = new GeneticAlgorithm(100, 2_500_000);
                 break;
             case SimulatedAnnealing: //not bad
                 decisionMethod = new SimulatedAnnealing(0, 0.10, 10);
