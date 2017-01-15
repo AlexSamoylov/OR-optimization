@@ -19,18 +19,24 @@ import org.dnu.samoylov.task.base.Objective;
 import org.dnu.samoylov.task.base.ProblemTask;
 import org.dnu.samoylov.task.diophantine.DiophantineEquation;
 
-import java.util.logging.Logger;
-
 public class Main extends Application {
-    public static final Logger LOGGER = Logger.getLogger(Main.class.getSimpleName());
+
     @SuppressWarnings("unchecked")
     public static void main(String[] args) {
         final ProblemTask problemTask = getCoeffVarTaskDemo();
 
-        final DecisionMethod decisionMethod = getDecisionMethod(DecisionMethodEnum.HillClimbing);
+        final DecisionMethod decisionMethod = getDecisionMethod(DecisionMethodEnum.SimulatedAnnealing);
 
         final ResultTaskInfo taskInfo = decisionMethod.process(problemTask);
 
+        print(problemTask, taskInfo);
+
+        ResultTaskInfo taskInfo2 = decisionMethod.process(problemTask, taskInfo.getContinueData());
+        System.out.println("------------------------");
+        print(problemTask, taskInfo2);
+    }
+
+    private static void print(ProblemTask problemTask, ResultTaskInfo taskInfo) {
         final Decision result = taskInfo.getResult();
         final WorkStatistic statistic = taskInfo.getWorkStatistic();
 
@@ -38,13 +44,13 @@ public class Main extends Application {
 
         System.out.println("method: " + taskInfo.getNameOfOptimizationMethod()
                 + "\nresult: " + minObjective
-                + "\n\tfor arguments:" + result
-                + "\n\n work statistic:\n" + statistic);
+                + "\n\tfor: " + result
+                + "\n work statistic:\n" + statistic + "\n");
 
         Decision localOptimum = new HillClimbing(result, 5, 1).process(problemTask).getResult();
-        System.out.println("check is local optimum radius 5:"
+        System.out.println("check is local optimum radius 5: "
                 + result.equals(localOptimum)
-                + " (local:" + localOptimum+")");
+                + " (local:" + localOptimum + ")");
 
         final Decision upgradedDecision = new HillClimbingBest(result, 100, 100_000).process(problemTask).getResult();
         final Objective upgradedMinObjective = problemTask.calculateObjective(upgradedDecision);
@@ -57,20 +63,20 @@ public class Main extends Application {
         DecisionMethod decisionMethod;
 
         switch (cl) {
-            case HillClimbing: // deprecated
+            case HillClimbing:
                 decisionMethod = new HillClimbing(1, 100_000);
                 break;
-            case HillClimbingBest://not bad
+            case HillClimbingBest:
                 decisionMethod = new HillClimbingBest(1000, 1_000_000);
                 break;
-            case GeneticAlgorithm://good
+            case GeneticAlgorithm:
                 decisionMethod = new GeneticAlgorithm(100, 2_500_000);
                 break;
-            case SimulatedAnnealing: //not bad
-                decisionMethod = new SimulatedAnnealing(0, 0.10, 10);
+            case SimulatedAnnealing:
+                decisionMethod = new SimulatedAnnealing(0, 0.10, 50);
                 break;
             case ParticleSwarm:
-                decisionMethod = new ParticleSwarm(20, 100_000); //good
+                decisionMethod = new ParticleSwarm(20, 100_000);
                 break;
             default:
                 throw new IllegalArgumentException("not supported DecisionMethodEnum");
@@ -80,9 +86,9 @@ public class Main extends Application {
     }
 
     //todo
-        private static ProblemTask getMediumCoeffVarTaskDemo() { //3, 40, 6 | 30, 0, -5
+    private static ProblemTask getMediumCoeffVarTaskDemo() { //3, 40, 6 | 30, 0, -5
         final int[] coefficients = new int[]{2, 6, 1};
-        final int[] exponent = new int[]    {2, 3, 2};
+        final int[] exponent = new int[]{2, 3, 2};
         final int result = 1825;
 
         return new DiophantineEquation(coefficients, exponent, result);
@@ -91,7 +97,7 @@ public class Main extends Application {
     //todo
     private static ProblemTask getCoeffVarTaskDemo() { //5, 15, 25, 35, 4
         final int[] coefficients = new int[]{5, 9, 3, 7, 2};
-        final int[] exponent = new int[]    {5, 3, 2, 2, 2};
+        final int[] exponent = new int[]{5, 3, 2, 2, 2};
         final int result = 60500;
 
         return new DiophantineEquation(coefficients, exponent, result);
@@ -99,7 +105,7 @@ public class Main extends Application {
 
     private static ProblemTask getManyVarTaskDemo() { //12, 6, 6, 7, 4, 5, 12
         final int[] coefficients = new int[]{1, 1, 1, 1, 1, 1, 1};
-        final int[] exponent = new int[]    {2, 2, 2, 2, 2, 2, 2};
+        final int[] exponent = new int[]{2, 2, 2, 2, 2, 2, 2};
         final int result = 450;
 
         return new DiophantineEquation(coefficients, exponent, result);
@@ -133,7 +139,7 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    private enum DecisionMethodEnum {
+    public enum DecisionMethodEnum {
         HillClimbing, HillClimbingBest, GeneticAlgorithm, SimulatedAnnealing, ParticleSwarm
     }
 }

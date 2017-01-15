@@ -1,7 +1,8 @@
 package org.dnu.samoylov.method.annealing;
 
 import org.dnu.samoylov.ResultTaskInfo;
-import org.dnu.samoylov.method.base.DecisionMethod;
+import org.dnu.samoylov.method.base.OneDecisionInitializeMethod;
+import org.dnu.samoylov.method.base.resume.ContinueWithOneDecisionInfo;
 import org.dnu.samoylov.task.base.Decision;
 import org.dnu.samoylov.task.base.Objective;
 import org.dnu.samoylov.task.base.ProblemTask;
@@ -9,7 +10,7 @@ import org.dnu.samoylov.task.base.ProblemTask;
 import java.math.BigInteger;
 import java.util.Random;
 
-public class SimulatedAnnealing extends DecisionMethod {
+public class SimulatedAnnealing extends OneDecisionInitializeMethod {
 
     private int ALPHA_RADIUS = 1000;
     public static final int NUM_OF_ATTEMPTS = 1000;
@@ -33,7 +34,7 @@ public class SimulatedAnnealing extends DecisionMethod {
     protected <DECISION extends Decision, OBJECTIVE extends Objective> ResultTaskInfo internalProcess(ProblemTask<DECISION, OBJECTIVE> task) {
         SimulatedAnnealingStatistic statistic = new SimulatedAnnealingStatistic();
 
-        DECISION currentBest = task.getRandomDecision();
+        DECISION currentBest = getStartNode(task);
         double T = initalT;
         int rejQuasInRaw = 0;
 
@@ -91,9 +92,10 @@ public class SimulatedAnnealing extends DecisionMethod {
 
         final DECISION result = currentBest;
 
-        return new ResultTaskInfo(getClass().getSimpleName(), result, statistic);
+        ResultTaskInfo resultTaskInfo = new ResultTaskInfo(getClass().getSimpleName(), result, statistic);
+        resultTaskInfo.setContinueData(new ContinueWithOneDecisionInfo(result));
+        return resultTaskInfo;
     }
-
 
     private int quasiEquilibriumReached(long acceptedCounter, long rejectedCounter) {
         if (acceptedCounter == ALPHA_RADIUS) {

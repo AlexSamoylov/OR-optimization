@@ -1,12 +1,15 @@
 package org.dnu.samoylov;
 
+import org.dnu.samoylov.method.base.resume.ContinueData;
 import org.dnu.samoylov.method.base.statistic.WorkStatistic;
 import org.dnu.samoylov.task.base.Decision;
 
 public class ResultTaskInfo {
+
     private Decision result;
     private String nameOfOptimizationMethod;
     private WorkStatistic workStatistic;
+    private ContinueData continueData;
 
     public ResultTaskInfo(String nameOfOptimizationMethod, Decision result, WorkStatistic workStatistic) {
         this.result = result;
@@ -14,9 +17,12 @@ public class ResultTaskInfo {
         this.workStatistic = workStatistic;
     }
 
-    public ResultTaskInfo(Decision result, WorkStatistic workStatistic) {
-        this.result = result;
-        this.workStatistic = workStatistic;
+    public ContinueData getContinueData() {
+        return continueData;
+    }
+
+    public void setContinueData(ContinueData continueData) {
+        this.continueData = continueData;
     }
 
     public Decision getResult() {

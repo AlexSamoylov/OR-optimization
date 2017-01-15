@@ -2,6 +2,7 @@ package org.dnu.samoylov.method.genetic;
 
 import org.dnu.samoylov.ResultTaskInfo;
 import org.dnu.samoylov.method.base.DecisionMethod;
+import org.dnu.samoylov.method.base.resume.ContinueData;
 import org.dnu.samoylov.task.base.Decision;
 import org.dnu.samoylov.task.base.Objective;
 import org.dnu.samoylov.task.base.ProblemTask;
@@ -39,10 +40,18 @@ public class GeneticAlgorithm extends DecisionMethod {
 
     @Override
     protected <DECISION extends Decision, OBJECTIVE extends Objective> ResultTaskInfo internalProcess(ProblemTask<DECISION, OBJECTIVE> task) {
+        final ArrayList<FitnessDecision<DECISION>> population = generatePopulation(task, populationSize);
+
+        return internalProcess(task, new ContinueGeneticData<>(population));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected <DECISION extends Decision, OBJECTIVE extends Objective> ResultTaskInfo internalProcess(ProblemTask<DECISION, OBJECTIVE> task, ContinueData continueData) {
         final GeneticStatistic statistic = new GeneticStatistic(populationSize, countOfIteration);
         int futureNumberIteration = countOfIteration;
 
-        final ArrayList<FitnessDecision<DECISION>> population = generatePopulation(task, populationSize);
+        final ArrayList<FitnessDecision<DECISION>> population = ((ContinueGeneticData<DECISION>) continueData).getPopulation();
 
         log.info(population.toString());
         int sumOfRank = calcSumOfRank(populationSize);
@@ -68,7 +77,9 @@ public class GeneticAlgorithm extends DecisionMethod {
         final DECISION result = bestOfSortedPopulation(population);
 
         log.info(population.toString());
-        return new ResultTaskInfo(getClass().getSimpleName(), result, statistic);
+        ResultTaskInfo resultTaskInfo = new ResultTaskInfo(getClass().getSimpleName(), result, statistic);
+        resultTaskInfo.setContinueData(new ContinueGeneticData<>(population));
+        return resultTaskInfo;
     }
 
     private <DECISION extends Decision> DECISION bestOfSortedPopulation(ArrayList<FitnessDecision<DECISION>> population) {

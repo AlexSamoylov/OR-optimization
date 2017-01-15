@@ -2,6 +2,7 @@ package org.dnu.samoylov.method.swarm;
 
 import org.dnu.samoylov.ResultTaskInfo;
 import org.dnu.samoylov.method.base.DecisionMethod;
+import org.dnu.samoylov.method.base.resume.ContinueData;
 import org.dnu.samoylov.task.base.Decision;
 import org.dnu.samoylov.task.base.Mediator;
 import org.dnu.samoylov.task.base.Objective;
@@ -37,7 +38,6 @@ public class ParticleSwarm extends DecisionMethod {
 
     @Override
     protected <DECISION extends Decision, OBJECTIVE extends Objective> ResultTaskInfo internalProcess(ProblemTask<DECISION, OBJECTIVE> startTask) {
-
         if (!(startTask instanceof SwarmProblemTask)) {
             throw  new IllegalArgumentException(startTask + "task must be implements SwarmProblemTask");
         }
@@ -45,6 +45,19 @@ public class ParticleSwarm extends DecisionMethod {
         SwarmProblemTask<DECISION, OBJECTIVE> task = (SwarmProblemTask<DECISION, OBJECTIVE>) startTask;
 
         Swarm<DECISION> swarm = Swarm.create(task, swarmSize);
+        return internalProcess(task, new ContinueSwarmData(swarm));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected <DECISION extends Decision, OBJECTIVE extends Objective> ResultTaskInfo internalProcess(ProblemTask<DECISION, OBJECTIVE> startTask, ContinueData continueData) {
+        if (!(startTask instanceof SwarmProblemTask)) {
+            throw  new IllegalArgumentException(startTask + "task must be implements SwarmProblemTask");
+        }
+
+        SwarmProblemTask<DECISION, OBJECTIVE> task = (SwarmProblemTask<DECISION, OBJECTIVE>) startTask;
+
+        Swarm<DECISION> swarm = (Swarm<DECISION>) ((ContinueSwarmData)continueData).getSwarm();
 
         LOGGER.info(swarm.toString());
 
@@ -90,12 +103,15 @@ public class ParticleSwarm extends DecisionMethod {
 
         LOGGER.info(swarm.toString());
         DECISION result = swarm.getGlobalBest(task);
-        return new ResultTaskInfo(getClass().getSimpleName(), result, null);
+
+        ContinueSwarmData continueSwarmData = new ContinueSwarmData(swarm);
+        ResultTaskInfo resultTaskInfo = new ResultTaskInfo(getClass().getSimpleName(), result, null);
+        resultTaskInfo.setContinueData(continueSwarmData);
+        return resultTaskInfo;
     }
 
 
-
-    private static final class Swarm<DECISION extends Decision> extends ArrayList<Chronology<DECISION>> {
+    public static final class Swarm<DECISION extends Decision> extends ArrayList<Chronology<DECISION>> {
 
         public static <DECISION extends Decision> Swarm<DECISION> create(SwarmProblemTask<DECISION, ?> task, int initialCapacity) {
             final Swarm<DECISION> swarm = new Swarm<>(initialCapacity);

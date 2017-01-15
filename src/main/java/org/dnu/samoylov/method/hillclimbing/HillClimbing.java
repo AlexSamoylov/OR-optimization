@@ -2,7 +2,8 @@ package org.dnu.samoylov.method.hillclimbing;
 
 
 import org.dnu.samoylov.ResultTaskInfo;
-import org.dnu.samoylov.method.base.DecisionMethod;
+import org.dnu.samoylov.method.base.OneDecisionInitializeMethod;
+import org.dnu.samoylov.method.base.resume.ContinueWithOneDecisionInfo;
 import org.dnu.samoylov.task.base.Decision;
 import org.dnu.samoylov.task.base.Objective;
 import org.dnu.samoylov.task.base.ProblemTask;
@@ -10,12 +11,11 @@ import org.dnu.samoylov.task.base.ProblemTask;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class HillClimbing extends DecisionMethod {
+public class HillClimbing extends OneDecisionInitializeMethod {
 
 
     private static final Logger LOGGER = Logger.getLogger("bla");
 
-    private final Decision startDecision;
 
     private final int radiusFoundNeighbor;
     private final int maxNumberOfIteration;
@@ -55,19 +55,11 @@ public class HillClimbing extends DecisionMethod {
 
         final DECISION result = currentNode;
 
-        return new ResultTaskInfo(getClass().getSimpleName(), result, statistic);
+        ResultTaskInfo resultTaskInfo = new ResultTaskInfo(getClass().getSimpleName(), result, statistic);
+        resultTaskInfo.setContinueData(new ContinueWithOneDecisionInfo(result));
+        return resultTaskInfo;
     }
 
 
 
-
-    @SuppressWarnings("unchecked")
-    private <DECISION extends Decision, OBJECTIVE extends Objective> DECISION getStartNode(ProblemTask<DECISION, OBJECTIVE> task) {
-        DECISION randomDecision = task.getRandomDecision();
-        if (startDecision != null && startDecision.getClass() == randomDecision.getClass()) {
-            return (DECISION) startDecision;
-        } else {
-            return randomDecision;
-        }
-    }
 }
