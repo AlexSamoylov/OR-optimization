@@ -15,20 +15,25 @@ import java.util.logging.Logger;
 public class ParticleSwarm extends DecisionMethod {
     public static final Logger LOGGER = Logger.getLogger(ParticleSwarm.class.getCanonicalName());
 
-    int swarmSize = 20;
-    float coefFi1 = 2.0f;
-    float coefFi2 = 2.1f;
-
-    float Fi = coefFi1 + coefFi2;
-    float coefX = (float) (2d / (2 * Fi - Math.sqrt(Math.pow(Fi, 2) - 4 * Fi)));
-
-    public ParticleSwarm(int timeOfLife) {
-        this.timeOfLife = timeOfLife;
-    }
-
+    private int swarmSize = 20;
     private int timeOfLife = 5_000;
 
-    Random random = new Random();
+
+    private final Random random = new Random();
+
+    private final float coefFi1 = 2.0f;
+    private final float coefFi2 = 2.1f;
+
+    private final float Fi = coefFi1 + coefFi2;
+    private final float coefX = (float) (2d / (2 * Fi - Math.sqrt(Math.pow(Fi, 2) - 4 * Fi)));
+
+
+
+
+    public ParticleSwarm(int swarmSize, int timeOfLife) {
+        this.timeOfLife = timeOfLife;
+        this.swarmSize = swarmSize;
+    }
 
     @Override
     protected <DECISION extends Decision, OBJECTIVE extends Objective> ResultTaskInfo internalProcess(ProblemTask<DECISION, OBJECTIVE> startTask) {

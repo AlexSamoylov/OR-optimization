@@ -21,10 +21,11 @@ import org.dnu.samoylov.task.diophantine.DiophantineEquation;
 
 public class Main extends Application {
 
+    @SuppressWarnings("unchecked")
     public static void main(String[] args) {
-        final ProblemTask problemTask = getMediumCoeffVarTaskDemo();
+        final ProblemTask problemTask = getCoeffVarTaskDemo();
 
-        final DecisionMethod decisionMethod = getDecisionMethod(DecisionMethodEnum.ParticleSwarm);
+        final DecisionMethod decisionMethod = getDecisionMethod(DecisionMethodEnum.GeneticAlgorithm);
 
         final ResultTaskInfo taskInfo = decisionMethod.process(problemTask);
 
@@ -37,6 +38,14 @@ public class Main extends Application {
                 + "\nresult: " + minObjective
                 + "\n\tfor arguments:" + result
                 + "\n\n work statistic:\n" + statistic);
+
+        final Decision upgradedDecision = new HillClimbingBest(result, 100, 100_000).process(problemTask).getResult();
+
+        final Objective upgradedMinObjective = problemTask.calculateObjective(upgradedDecision);
+
+        System.out.println("HillClimbingBest upgrade:"
+                + "\nresult: " + upgradedMinObjective
+                + "\n\tfor arguments:" + upgradedDecision);
     }
 
     private static DecisionMethod getDecisionMethod(DecisionMethodEnum cl) {
@@ -50,10 +59,7 @@ public class Main extends Application {
                         .build();
                 break;
             case HillClimbingBest://not bad
-                decisionMethod = HillClimbingBest.newBuilder()
-                        .setRadiusFoundNeighbor(1000)
-                        .setMaxNumberOfIteration(10_000_000)
-                        .build();
+                decisionMethod = new HillClimbingBest(1000, 10_000_000);
                 break;
             case GeneticAlgorithm://good
                 decisionMethod = new GeneticAlgorithm(100, 2_500_000);
@@ -62,7 +68,7 @@ public class Main extends Application {
                 decisionMethod = new SimulatedAnnealing(0, 0.10, 10);
                 break;
             case ParticleSwarm:
-                decisionMethod = new ParticleSwarm(100_000); //good
+                decisionMethod = new ParticleSwarm(20, 100_000); //good
                 break;
             default:
                 throw new IllegalArgumentException("not supported DecisionMethodEnum");
