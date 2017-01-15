@@ -13,25 +13,30 @@ import java.util.logging.Logger;
 public class HillClimbing extends DecisionMethod {
 
 
-    private static final Logger LOGGER = Logger.getLogger(HillClimbing.class.getName());
+    private static final Logger LOGGER = Logger.getLogger("bla");
+
+    private final Decision startDecision;
 
     private final int radiusFoundNeighbor;
     private final int maxNumberOfIteration;
 
-    private HillClimbing(int radiusFoundNeighbor, int maxNumberOfIteration) {
+    public HillClimbing(Decision startDecision, int radiusFoundNeighbor, int maxNumberOfIteration) {
+        LOGGER.setUseParentHandlers(false);
+
         this.radiusFoundNeighbor = radiusFoundNeighbor;
         this.maxNumberOfIteration = maxNumberOfIteration;
+        this.startDecision = startDecision;
     }
 
-    public static Builder newBuilder() {
-        return new Builder();
+    public HillClimbing(int radiusFoundNeighbor, int maxNumberOfIteration) {
+        this(null, radiusFoundNeighbor, maxNumberOfIteration);
     }
 
     @Override
     protected<DECISION extends Decision, OBJECTIVE extends Objective> ResultTaskInfo internalProcess(ProblemTask<DECISION, OBJECTIVE> task) {
         final HillClimbingStatistic statistic = new HillClimbingStatistic();
 
-        DECISION currentNode = task.getRandomDecision();
+        DECISION currentNode = getStartNode(task);
         LOGGER.info("start node:" + currentNode);
 
         boolean found;
@@ -56,32 +61,13 @@ public class HillClimbing extends DecisionMethod {
 
 
 
-
-
-
-
-
-    public static class Builder {
-        int radiusFoundNeighbor = 1;
-        private int maxNumberOfIteration = -1;
-
-        private Builder() {
+    @SuppressWarnings("unchecked")
+    private <DECISION extends Decision, OBJECTIVE extends Objective> DECISION getStartNode(ProblemTask<DECISION, OBJECTIVE> task) {
+        DECISION randomDecision = task.getRandomDecision();
+        if (startDecision != null && startDecision.getClass() == randomDecision.getClass()) {
+            return (DECISION) startDecision;
+        } else {
+            return randomDecision;
         }
-
-        public Builder setRadiusFoundNeighbor(int radiusFoundNeighbor) {
-            this.radiusFoundNeighbor = radiusFoundNeighbor;
-            return this;
-        }
-
-        public Builder setMaxNumberOfIteration(int maxNumberOfIteration) {
-            this.maxNumberOfIteration = maxNumberOfIteration;
-            return this;
-        }
-
-        public HillClimbing build() {
-            return new HillClimbing(radiusFoundNeighbor, maxNumberOfIteration);
-        }
-
-
     }
 }

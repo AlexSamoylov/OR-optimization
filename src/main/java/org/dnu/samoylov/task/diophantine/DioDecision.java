@@ -20,24 +20,25 @@ public class DioDecision implements Decision {
     }
 
     @Override
+    public String toString() {
+        return Arrays.toString(xValues);
+
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
         DioDecision that = (DioDecision) o;
 
-        return Arrays.equals(xValues, that.xValues);
+        if (!Arrays.equals(xValues, that.xValues)) return false;
 
+        return true;
     }
 
     @Override
     public int hashCode() {
         return xValues != null ? Arrays.hashCode(xValues) : 0;
-    }
-
-    @Override
-    public String toString() {
-        return Arrays.toString(xValues);
-
     }
 }

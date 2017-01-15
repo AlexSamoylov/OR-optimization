@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 public class HillClimbingBest extends DecisionMethod {
 
 
-    private static final Logger LOGGER = Logger.getLogger(HillClimbingBest.class.getName());
+    private static final Logger LOGGER = Logger.getLogger("hjbh");
 
     private final Decision startDecision;
 
@@ -24,6 +24,7 @@ public class HillClimbingBest extends DecisionMethod {
         this.radiusFoundNeighbor = radiusFoundNeighbor;
         this.maxNumberOfIteration = maxNumberOfIteration;
         this.startDecision = startDecision;
+        LOGGER.setUseParentHandlers(false);
     }
 
     public HillClimbingBest(int radiusFoundNeighbor, int maxNumberOfIteration) {

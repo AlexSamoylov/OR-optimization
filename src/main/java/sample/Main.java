@@ -19,13 +19,15 @@ import org.dnu.samoylov.task.base.Objective;
 import org.dnu.samoylov.task.base.ProblemTask;
 import org.dnu.samoylov.task.diophantine.DiophantineEquation;
 
-public class Main extends Application {
+import java.util.logging.Logger;
 
+public class Main extends Application {
+    public static final Logger LOGGER = Logger.getLogger(Main.class.getSimpleName());
     @SuppressWarnings("unchecked")
     public static void main(String[] args) {
         final ProblemTask problemTask = getCoeffVarTaskDemo();
 
-        final DecisionMethod decisionMethod = getDecisionMethod(DecisionMethodEnum.GeneticAlgorithm);
+        final DecisionMethod decisionMethod = getDecisionMethod(DecisionMethodEnum.HillClimbing);
 
         final ResultTaskInfo taskInfo = decisionMethod.process(problemTask);
 
@@ -39,10 +41,13 @@ public class Main extends Application {
                 + "\n\tfor arguments:" + result
                 + "\n\n work statistic:\n" + statistic);
 
+        Decision localOptimum = new HillClimbing(result, 5, 1).process(problemTask).getResult();
+        System.out.println("check is local optimum radius 5:"
+                + result.equals(localOptimum)
+                + " (local:" + localOptimum+")");
+
         final Decision upgradedDecision = new HillClimbingBest(result, 100, 100_000).process(problemTask).getResult();
-
         final Objective upgradedMinObjective = problemTask.calculateObjective(upgradedDecision);
-
         System.out.println("HillClimbingBest upgrade:"
                 + "\nresult: " + upgradedMinObjective
                 + "\n\tfor arguments:" + upgradedDecision);
@@ -53,13 +58,10 @@ public class Main extends Application {
 
         switch (cl) {
             case HillClimbing: // deprecated
-                decisionMethod = HillClimbing.newBuilder()
-                        .setRadiusFoundNeighbor(1000)
-                        .setMaxNumberOfIteration(100_000)
-                        .build();
+                decisionMethod = new HillClimbing(1, 100_000);
                 break;
             case HillClimbingBest://not bad
-                decisionMethod = new HillClimbingBest(1000, 10_000_000);
+                decisionMethod = new HillClimbingBest(1000, 1_000_000);
                 break;
             case GeneticAlgorithm://good
                 decisionMethod = new GeneticAlgorithm(100, 2_500_000);

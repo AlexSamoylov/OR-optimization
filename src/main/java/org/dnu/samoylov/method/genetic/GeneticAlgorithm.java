@@ -18,7 +18,7 @@ public class GeneticAlgorithm extends DecisionMethod {
 
 
 
-    private static final Logger log = Logger.getLogger(DecisionMethod.class.getName());
+    private static final Logger log = Logger.getLogger(DecisionMethod.class.getSimpleName());
 
     private final int populationSize;
     private final int countOfIteration;
