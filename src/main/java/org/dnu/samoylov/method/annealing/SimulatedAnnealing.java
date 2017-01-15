@@ -46,7 +46,8 @@ public class SimulatedAnnealing extends DecisionMethod {
 
         boolean finished = false;
         do {
-            statistic.increaseIterationCount();
+            statistic.increaseIterationCount(currentBest);
+
             final DECISION candidate = task.getNeighbor(currentBest, ALPHA_RADIUS);
 
             boolean calExpFdivT = calcMainFunction(task, currentBest, candidate, T);

@@ -47,6 +47,10 @@ public class GeneticAlgorithm extends DecisionMethod {
         log.info(population.toString());
         int sumOfRank = calcSumOfRank(populationSize);
         do {
+            population.sort(fitnessDecisionComparator);
+
+            statistic.increaseIterationCount(bestOfSortedPopulation(population));
+
             final Pair<DECISION> parent = parentSelection(population, sumOfRank);
 
             final Pair<DECISION> child = crossover(task, parent);
@@ -61,12 +65,15 @@ public class GeneticAlgorithm extends DecisionMethod {
         } while ( --futureNumberIteration != 0 );
 
         population.sort(fitnessDecisionComparator);
-        final DECISION result = population.get(population.size()-1).decision;
+        final DECISION result = bestOfSortedPopulation(population);
 
         log.info(population.toString());
         return new ResultTaskInfo(getClass().getSimpleName(), result, statistic);
     }
 
+    private <DECISION extends Decision> DECISION bestOfSortedPopulation(ArrayList<FitnessDecision<DECISION>> population) {
+        return population.get(populationSize - 1).decision;
+    }
 
 
     private <DECISION extends Decision> ArrayList<FitnessDecision<DECISION>> generatePopulation(final ProblemTask<DECISION, ?> task, int populationSize) {
@@ -81,9 +88,6 @@ public class GeneticAlgorithm extends DecisionMethod {
     }
 
     private <DECISION extends Decision> Pair<DECISION> parentSelection(ArrayList<FitnessDecision<DECISION>> population, int sumOfRank) {
-
-        population.sort(fitnessDecisionComparator);
-
         int topIndex1 = getTopIndex(sumOfRank);
         int topIndex2 = getTopIndex(sumOfRank, topIndex1);
 

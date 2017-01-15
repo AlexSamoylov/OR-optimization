@@ -37,7 +37,7 @@ public class HillClimbing extends DecisionMethod {
         boolean found;
 
         do {
-            statistic.increaseIterationCount();
+            statistic.increaseIterationCount(currentNode);
             found = true;
             List<DECISION> allNeighbor = task.getAllNeighbor(currentNode, radiusFoundNeighbor);
             for (DECISION neighbor : allNeighbor) {

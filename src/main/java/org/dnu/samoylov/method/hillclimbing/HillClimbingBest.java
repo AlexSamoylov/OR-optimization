@@ -36,7 +36,7 @@ public class HillClimbingBest extends DecisionMethod {
 
 
         do {
-            statistic.increaseIterationCount();
+            statistic.increaseIterationCount(currentNode);
 
             if (statistic.iterationCount == maxNumberOfIteration / 2
                     || statistic.iterationCount == maxNumberOfIteration * 3 / 4

@@ -1,20 +1,26 @@
 package org.dnu.samoylov.method.genetic;
 
+import org.dnu.samoylov.method.base.statistic.TraceBestStatistic;
 import org.dnu.samoylov.method.base.statistic.WorkStatistic;
+import org.dnu.samoylov.task.base.Decision;
 
-public class GeneticStatistic implements WorkStatistic {
+public class GeneticStatistic extends TraceBestStatistic implements WorkStatistic {
 
     private final int populationSize;
-    private final int countOfIteration;
 
     public GeneticStatistic(int populationSize, int countOfIteration) {
         this.populationSize = populationSize;
-        this.countOfIteration = countOfIteration;
+        this.iterationCount = countOfIteration;
+    }
+
+    @Override
+    public void increaseIterationCount(Decision bestOnCurrentIteration) {
+        decisions.add(bestOnCurrentIteration);
     }
 
     @Override
     public String toString() {
-        return   "populationSize= " + populationSize +
-                ", iterationCount= " + countOfIteration;
+        return "populationSize= " + populationSize +
+                ", " + super.toString();
     }
 }
