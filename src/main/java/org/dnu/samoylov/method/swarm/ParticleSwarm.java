@@ -61,8 +61,11 @@ public class ParticleSwarm extends DecisionMethod {
 
         LOGGER.info(swarm.toString());
 
+        ParticleSwarmStatistic statistic = new ParticleSwarmStatistic(timeOfLife);
 
         for (int i = 0; i < timeOfLife; i++) {
+            statistic.increaseIterationCount(swarm.getGlobalBest(task));
+
             for (Chronology<DECISION> x : swarm) {
 
                 Mediator<DECISION> lastVelocity = task.createMediator(x.lastVelocity);
@@ -105,7 +108,7 @@ public class ParticleSwarm extends DecisionMethod {
         DECISION result = swarm.getGlobalBest(task);
 
         ContinueSwarmData continueSwarmData = new ContinueSwarmData(swarm);
-        ResultTaskInfo resultTaskInfo = new ResultTaskInfo(getClass().getSimpleName(), result, null);
+        ResultTaskInfo resultTaskInfo = new ResultTaskInfo(getClass().getSimpleName(), result, statistic);
         resultTaskInfo.setContinueData(continueSwarmData);
         return resultTaskInfo;
     }

@@ -25,14 +25,14 @@ public class Main extends Application {
     public static void main(String[] args) {
         final ProblemTask problemTask = getCoeffVarTaskDemo();
 
-        final DecisionMethod decisionMethod = getDecisionMethod(DecisionMethodEnum.SimulatedAnnealing);
+        final DecisionMethod decisionMethod = getDecisionMethod(DecisionMethodEnum.ParticleSwarm);
 
         final ResultTaskInfo taskInfo = decisionMethod.process(problemTask);
 
         print(problemTask, taskInfo);
 
         ResultTaskInfo taskInfo2 = decisionMethod.process(problemTask, taskInfo.getContinueData());
-        System.out.println("------------------------");
+        System.out.println("\n------------------------\n");
         print(problemTask, taskInfo2);
     }
 
