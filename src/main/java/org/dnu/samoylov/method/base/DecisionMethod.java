@@ -3,6 +3,7 @@ package org.dnu.samoylov.method.base;
 import org.dnu.samoylov.ResultTaskInfo;
 import org.dnu.samoylov.method.base.resume.ContinueData;
 import org.dnu.samoylov.method.base.statistic.GlobalWorkStatistic;
+import org.dnu.samoylov.method.base.statistic.TraceBestStatistic;
 import org.dnu.samoylov.task.base.Decision;
 import org.dnu.samoylov.task.base.Objective;
 import org.dnu.samoylov.task.base.ProblemTask;
@@ -16,7 +17,7 @@ public abstract class DecisionMethod {
         ResultTaskInfo resultTaskInfo = internalProcess(task, continueData);
         workStatistic.stopEstimationTime();
 
-        workStatistic.setSpecificWorkStatistic(resultTaskInfo.getWorkStatistic());
+        workStatistic.setSpecificWorkStatistic((TraceBestStatistic) resultTaskInfo.getWorkStatistic());
 
         ResultTaskInfo resultTaskInfo1 = new ResultTaskInfo(resultTaskInfo.getNameOfOptimizationMethod(), resultTaskInfo.getResult(), workStatistic);
         resultTaskInfo1.setContinueData(resultTaskInfo.getContinueData());
@@ -31,7 +32,7 @@ public abstract class DecisionMethod {
         ResultTaskInfo resultTaskInfo = internalProcess(task);
         workStatistic.stopEstimationTime();
 
-        workStatistic.setSpecificWorkStatistic(resultTaskInfo.getWorkStatistic());
+        workStatistic.setSpecificWorkStatistic((TraceBestStatistic) resultTaskInfo.getWorkStatistic());
 
         ResultTaskInfo resultTaskInfo1 = new ResultTaskInfo(resultTaskInfo.getNameOfOptimizationMethod(), resultTaskInfo.getResult(), workStatistic);
         resultTaskInfo1.setContinueData(resultTaskInfo.getContinueData());

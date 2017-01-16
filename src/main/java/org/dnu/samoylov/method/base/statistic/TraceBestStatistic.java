@@ -19,6 +19,10 @@ public class TraceBestStatistic implements WorkStatistic {
         iterationCount++;
     }
 
+    public List<Decision> getDecisions() {
+        return decisions;
+    }
+
     public long getIterationCount() {
         return iterationCount;
     }

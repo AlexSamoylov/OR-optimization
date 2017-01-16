@@ -25,6 +25,10 @@ public class ResultTaskInfo {
         this.continueData = continueData;
     }
 
+    public void setWorkStatistic(WorkStatistic workStatistic) {
+        this.workStatistic = workStatistic;
+    }
+
     public Decision getResult() {
         return result;
     }

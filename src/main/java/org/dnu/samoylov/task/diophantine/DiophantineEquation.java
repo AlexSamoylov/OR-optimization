@@ -7,10 +7,8 @@ import org.dnu.samoylov.task.base.Mediator;
 
 import java.math.BigInteger;
 import java.util.*;
-import java.util.logging.Logger;
 
 public class DiophantineEquation implements SwarmProblemTask<DioDecision, DioObjective> {
-    public static final Logger LOGGER = Logger.getLogger(DiophantineEquation.class.getSimpleName());
 
     public static int BOTTOM_BOUND_OF_SOLUTION = 0;
     public static int TOP_BOUND_OF_SOLUTION = 1000;// Short.MAX_VALUE;
@@ -24,13 +22,24 @@ public class DiophantineEquation implements SwarmProblemTask<DioDecision, DioObj
     private final Random random = new Random();
 
     public DiophantineEquation(int[] coefficients, int[] exponent, int result) {
-        this.coefficients = coefficients;
-        this.exponent = exponent;
+        size = Math.max(coefficients.length, exponent.length);
 
-        assert coefficients.length == exponent.length;
+        this.coefficients = extendToFullSize(coefficients);
+        this.exponent = extendToFullSize(exponent);
 
-        this.size = coefficients.length;
         this.result = result;
+    }
+
+    private int[] extendToFullSize(int[] exponent) {
+        int[] newExp = new int[size];
+        for (int i = 0; i < newExp.length; i++) {
+            if (i < exponent.length) {
+                newExp[i] = exponent[i];
+            } else {
+                newExp[i] = 1;
+            }
+        }
+        return newExp;
     }
 
     @Override
@@ -279,9 +288,21 @@ public class DiophantineEquation implements SwarmProblemTask<DioDecision, DioObj
     }
 
 
+    public int[] getCoefficients() {
+        return coefficients;
+    }
+
+    public int[] getExponent() {
+        return exponent;
+    }
+
+    public int getResult() {
+        return result;
+    }
+
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder("DiophantineEquation {");
+        StringBuilder result = new StringBuilder("");
         for (int i = 0; i < size; i++) {
             result
                     .append(coefficients[i])
@@ -299,7 +320,7 @@ public class DiophantineEquation implements SwarmProblemTask<DioDecision, DioObj
                 .append(" - ")
                 .append(this.result)
                 .append(" -> min")
-                .append("}");
+                .append("");
 
         return result.toString();
     }

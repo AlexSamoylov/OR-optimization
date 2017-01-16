@@ -23,7 +23,6 @@ public class HillClimbingBest extends OneDecisionInitializeMethod {
         this.radiusFoundNeighbor = radiusFoundNeighbor;
         this.maxNumberOfIteration = maxNumberOfIteration;
         this.startDecision = startDecision;
-        LOGGER.setUseParentHandlers(false);
     }
 
     public HillClimbingBest(int radiusFoundNeighbor, int maxNumberOfIteration) {

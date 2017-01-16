@@ -1,7 +1,11 @@
 package org.dnu.samoylov.method.base.statistic;
 
+import org.dnu.samoylov.task.base.Decision;
+
+import java.util.List;
+
 public class GlobalWorkStatistic implements WorkStatistic {
-    private WorkStatistic specificWorkStatistic;
+    private TraceBestStatistic specificWorkStatistic;
 
     long startTime = 0;
     long endTime = 0;
@@ -18,9 +22,14 @@ public class GlobalWorkStatistic implements WorkStatistic {
         return (endTime - startTime) / 1000;
     }
 
-    public void setSpecificWorkStatistic(WorkStatistic specificWorkStatistic) {
+    public void setSpecificWorkStatistic(TraceBestStatistic specificWorkStatistic) {
         this.specificWorkStatistic = specificWorkStatistic;
     }
+
+    public List<Decision> getTraceBest() {
+        return specificWorkStatistic.getDecisions();
+    }
+
 
     @Override
     public String toString() {
