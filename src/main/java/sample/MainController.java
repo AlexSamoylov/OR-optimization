@@ -294,9 +294,12 @@ public class MainController implements Initializable {
     private void showChart(ArrayList<Object[]> data) {
         XYChart.Series<Number, Number> numberNumberSeries = chartEvolutionBest.getData().size() != 0 ? chartEvolutionBest.getData().get(0) : new XYChart.Series<>();
 
-        int start = numberNumberSeries.getData().size();
+        ObservableList<XYChart.Data<Number, Number>> observableList = numberNumberSeries.getData();
+        int start = observableList.size()>0? (int) observableList.get(observableList.size() - 1).getXValue() : 0;
+
+        System.out.println("start = [" + start + "]");
         for (int i = 0; i < data.size(); i ++) {
-            numberNumberSeries.getData().add(new XYChart.Data<>(start+(Integer)(data.get(i)[0]), (BigInteger)(data.get(i)[1])));
+            observableList.add(new XYChart.Data<>(start + (Integer) (data.get(i)[0]), (BigInteger) (data.get(i)[1])));
         }
 
         if (chartEvolutionBest.getData().size() == 0) {
@@ -317,6 +320,9 @@ public class MainController implements Initializable {
             BigInteger bigInteger = currentProblemTask.calculateFitness(traceBest.get(i));
             res.add(new Object[] { i, bigInteger});
         }
+        Decision end = traceBest.get(traceBest.size() - 1);
+        BigInteger bigInteger = currentProblemTask.calculateFitness(end);
+        res.add(new Object[] { traceBest.size() - 1, bigInteger});
         return res;
     }
 

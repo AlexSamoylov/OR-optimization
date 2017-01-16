@@ -12,7 +12,7 @@ import java.util.Random;
 
 public class SimulatedAnnealing extends OneDecisionInitializeMethod {
 
-    private int ALPHA_RADIUS = 1000;
+    private int ALPHA_RADIUS = 100;
     public static final int NUM_OF_ATTEMPTS = 1000;
     private double initalT;
 
