@@ -36,7 +36,11 @@ public class DioMediator implements Mediator<DioDecision> {
         final int[] ints = new int[xValues.length];
 
         for (int i = 0; i <ints.length; i++) {
-            ints[i] = (int) (xValues[i] % Integer.MAX_VALUE);
+            int tmp = (int) (xValues[i] % DiophantineEquation.TOP_BOUND_OF_SOLUTION);
+            if (tmp < 0) {
+                tmp += DiophantineEquation.TOP_BOUND_OF_SOLUTION;
+            }
+            ints[i] = tmp;
         }
 
         return new DioDecision(ints);

@@ -10,7 +10,6 @@ import java.util.*;
 
 public class DiophantineEquation implements SwarmProblemTask<DioDecision, DioObjective> {
 
-    public static int BOTTOM_BOUND_OF_SOLUTION = 0;
     public static int TOP_BOUND_OF_SOLUTION = Short.MAX_VALUE;
 
     private final int[] coefficients;
@@ -65,7 +64,13 @@ public class DiophantineEquation implements SwarmProblemTask<DioDecision, DioObj
         final int[] x = Arrays.copyOf(decision.getxValues(), size);
 
         for (int i = 0; i < size; i++) {
-            x[i] = x[i] - radius + random.nextInt(radius * 2);
+
+            int bottomValue = x[i] - radius;
+            if (bottomValue >= 0) {
+                x[i] = bottomValue + random.nextInt(radius * 2);
+            } else {
+                x[i] = random.nextInt(radius * 2 + bottomValue);
+            }
         }
 
         return new DioDecision(x);
@@ -152,7 +157,7 @@ public class DiophantineEquation implements SwarmProblemTask<DioDecision, DioObj
     public DioDecision getRandomDecision() {
         DioDecision dioDecision = new DioDecision(size);
         for (int i = 0; i < size; i++) {
-            dioDecision.xValues[i] = BOTTOM_BOUND_OF_SOLUTION + random.nextInt(TOP_BOUND_OF_SOLUTION - BOTTOM_BOUND_OF_SOLUTION);
+            dioDecision.xValues[i] = random.nextInt(TOP_BOUND_OF_SOLUTION);
         }
 
         return dioDecision;
@@ -185,10 +190,10 @@ public class DiophantineEquation implements SwarmProblemTask<DioDecision, DioObj
             Long tmpExtLong = (long) (alpha * (first[i] - second[i]) + first[i]);
 
 
-            if (tmpExtLong > Integer.MAX_VALUE) {
-                dioDecision.xValues[i] = Integer.MAX_VALUE;
-            } else if (tmpExtLong < Integer.MIN_VALUE) {
-                dioDecision.xValues[i] = Integer.MIN_VALUE;
+            if (tmpExtLong > TOP_BOUND_OF_SOLUTION) {
+                dioDecision.xValues[i] = TOP_BOUND_OF_SOLUTION;
+            } else if (tmpExtLong < 0) {
+                dioDecision.xValues[i] = 0;
             } else {
                 dioDecision.xValues[i] = tmpExtLong.intValue();
             }
@@ -204,7 +209,9 @@ public class DiophantineEquation implements SwarmProblemTask<DioDecision, DioObj
 
         for (int i = 0; i <= radius * 2; i++) {
             int xI = x - radius + i;
-            variants.add(xI);
+            if (xI>=0) {
+                variants.add(xI);
+            }
         }
 
         return variants;

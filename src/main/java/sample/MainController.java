@@ -286,10 +286,10 @@ public class MainController implements Initializable {
 
         final Objective minObjective = problemTask.calculateObjective(result);
 
-        printRow("method: " + taskInfo.getNameOfOptimizationMethod()
-                + "\nresult: " + minObjective
-                + "\n\tfor: " + result
-                + "\n work statistic:\n" + statistic + "\n");
+        printRow("[" + taskInfo.getNameOfOptimizationMethod()
+                + "]\nresult: " + minObjective
+                + " for: " + result
+                + "\n\n" + statistic);
 
         int radiusFoundNeighbor = (int) (Math.log(2000) / Math.log( ((DiophantineEquation)currentProblemTask).getCoefficients().length));
 

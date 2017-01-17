@@ -27,6 +27,6 @@ public class DioObjective implements Objective {
 
     @Override
     public String toString() {
-        return "Diophantine objective = " + objective;
+        return "objective = " + objective;
     }
 }
