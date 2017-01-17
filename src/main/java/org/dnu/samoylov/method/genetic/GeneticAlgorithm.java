@@ -166,7 +166,7 @@ public class GeneticAlgorithm extends DecisionMethod {
 
 
 
-    private <DECISION extends Decision, OBJECTIVE extends Objective> FitnessDecision<DECISION> calculateFitness(ProblemTask<DECISION, OBJECTIVE> task, DECISION decision) {
+    public static  <DECISION extends Decision, OBJECTIVE extends Objective> FitnessDecision<DECISION> calculateFitness(ProblemTask<DECISION, OBJECTIVE> task, DECISION decision) {
         return new FitnessDecision<>(decision, task.calculateFitness(decision));
     }
 
@@ -212,6 +212,11 @@ public class GeneticAlgorithm extends DecisionMethod {
     public final static class FitnessDecision<DECISION extends Decision> {
         private DECISION decision;
         private BigInteger fitness;
+
+        public static final<DECISION extends Decision> boolean isFirstBetter(FitnessDecision<DECISION> first,
+                                                  FitnessDecision<DECISION> second) {
+            return first.getFitness().compareTo(second.getFitness()) < 0;
+        }
 
         public FitnessDecision(DECISION decision, BigInteger fitness) {
             this.decision = decision;

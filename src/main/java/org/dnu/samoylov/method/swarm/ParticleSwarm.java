@@ -3,6 +3,7 @@ package org.dnu.samoylov.method.swarm;
 import org.dnu.samoylov.ResultTaskInfo;
 import org.dnu.samoylov.method.base.DecisionMethod;
 import org.dnu.samoylov.method.base.resume.ContinueData;
+import org.dnu.samoylov.method.genetic.GeneticAlgorithm;
 import org.dnu.samoylov.task.base.Decision;
 import org.dnu.samoylov.task.base.Mediator;
 import org.dnu.samoylov.task.base.Objective;
@@ -27,7 +28,6 @@ public class ParticleSwarm extends DecisionMethod {
 
     private final float Fi = coefFi1 + coefFi2;
     private final float coefX = (float) (2d / (2 * Fi - Math.sqrt(Math.pow(Fi, 2) - 4 * Fi)));
-
 
 
 
@@ -69,9 +69,9 @@ public class ParticleSwarm extends DecisionMethod {
             for (Chronology<DECISION> x : swarm) {
 
                 Mediator<DECISION> lastVelocity = task.createMediator(x.lastVelocity);
-                Mediator<DECISION> personalBest = task.createMediator(x.personalBest);
-                Mediator<DECISION> globalBest = task.createMediator(x.globalBest);
-                Mediator<DECISION> last = task.createMediator(x.last);
+                Mediator<DECISION> personalBest = task.createMediator(x.personalBest.getDecision());
+                Mediator<DECISION> globalBest = task.createMediator(x.globalBest.getDecision());
+                Mediator<DECISION> last = task.createMediator(x.last.getDecision());
 
                 Mediator<DECISION> vLast = task.multiply(lastVelocity, coefX);
                 Mediator<DECISION> velocityToPersonalBest = task.multiply(
@@ -89,14 +89,14 @@ public class ParticleSwarm extends DecisionMethod {
                 );
 
                 DECISION newX = task.sum(last, newV).extract();
-                x.last = newX;
+                x.last = GeneticAlgorithm.calculateFitness(task, newX);
                 x.lastVelocity = newV.extract();
 
-                if (task.isFirstBetter(x.last, x.personalBest)) {
+                if (GeneticAlgorithm.FitnessDecision.isFirstBetter(x.last, x.personalBest)) {
                     x.personalBest = x.last;
 
                     for (Chronology<DECISION> y : x.topologyNeighborhood) {
-                        if (task.isFirstBetter(x.personalBest, y.globalBest)) {
+                        if (GeneticAlgorithm.FitnessDecision.isFirstBetter(x.personalBest, y.globalBest)) {
                             y.globalBest = x.personalBest;
                         }
                     }
@@ -134,7 +134,7 @@ public class ParticleSwarm extends DecisionMethod {
         private static <DECISION extends Decision> void updateGlobalBest(SwarmProblemTask<DECISION, ?> task, Swarm<DECISION> swarm) {
             for (Chronology<DECISION> x : swarm) {
                 for (Chronology<DECISION> y : x.topologyNeighborhood) {
-                    if (task.isFirstBetter(x.personalBest, y.globalBest)) {
+                    if (GeneticAlgorithm.FitnessDecision.isFirstBetter(x.personalBest, y.globalBest)) {
                         y.globalBest = x.personalBest;
                     }
                 }
@@ -169,34 +169,35 @@ public class ParticleSwarm extends DecisionMethod {
 
 
         private DECISION getGlobalBest(SwarmProblemTask<DECISION, ?> task) {
-            DECISION globalBest = this.get(0).personalBest;
+            GeneticAlgorithm.FitnessDecision<DECISION> globalBest = this.get(0).personalBest;
 
             for (int i = 1; i < this.size(); i++) {
-                DECISION candidate = this.get(i).last;
-                if (task.isFirstBetter(candidate, globalBest)) {
+                GeneticAlgorithm.FitnessDecision<DECISION> candidate = this.get(i).personalBest;
+                if (GeneticAlgorithm.FitnessDecision.isFirstBetter(candidate, globalBest)) {
                     globalBest = candidate;
                 }
             }
-            return globalBest;
+            return globalBest.getDecision();
         }
 
     }
 
 
     private static final class Chronology<DECISION extends Decision> {
-        DECISION personalBest;
-        DECISION globalBest;
+        GeneticAlgorithm.FitnessDecision<DECISION> personalBest;
+        GeneticAlgorithm.FitnessDecision<DECISION> globalBest;
 
         DECISION lastVelocity;
 
         private List<Chronology<DECISION>> topologyNeighborhood = new ArrayList<>(2);
-        private DECISION last;
+        private GeneticAlgorithm.FitnessDecision<DECISION> last;
 
         public Chronology(SwarmProblemTask<DECISION, ?> task) {
             DECISION randomDecision = task.getRandomDecision();
-            this.last = randomDecision;
-            this.personalBest = randomDecision;
-            this.globalBest = randomDecision;
+            this.last = GeneticAlgorithm.calculateFitness(task, randomDecision);
+
+            this.personalBest = last;
+            this.globalBest = last;
             this.lastVelocity = task.createZero();
         }
 

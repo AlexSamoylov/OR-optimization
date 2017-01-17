@@ -4,6 +4,7 @@ package org.dnu.samoylov.method.hillclimbing;
 import org.dnu.samoylov.ResultTaskInfo;
 import org.dnu.samoylov.method.base.OneDecisionInitializeMethod;
 import org.dnu.samoylov.method.base.resume.ContinueWithOneDecisionInfo;
+import org.dnu.samoylov.method.genetic.GeneticAlgorithm;
 import org.dnu.samoylov.task.base.Decision;
 import org.dnu.samoylov.task.base.Objective;
 import org.dnu.samoylov.task.base.ProblemTask;
@@ -33,12 +34,13 @@ public class HillClimbingBest extends OneDecisionInitializeMethod {
     protected<DECISION extends Decision, OBJECTIVE extends Objective> ResultTaskInfo internalProcess(ProblemTask<DECISION, OBJECTIVE> task) {
         final HillClimbingStatistic statistic = new HillClimbingStatistic();
 
-        DECISION currentNode = getStartNode(task);
+        DECISION currentNodeTmp = getStartNode(task);
+        GeneticAlgorithm.FitnessDecision<DECISION> currentNode = GeneticAlgorithm.calculateFitness(task, currentNodeTmp);
 
         LOGGER.info("start node:" + currentNode);
 
         do {
-            statistic.increaseIterationCount(currentNode);
+            statistic.increaseIterationCount(currentNode.getDecision());
 
             if (statistic.iterationCount == maxNumberOfIteration / 2
                     || statistic.iterationCount == maxNumberOfIteration * 3 / 4
@@ -46,14 +48,15 @@ public class HillClimbingBest extends OneDecisionInitializeMethod {
                 radiusFoundNeighbor = radiusFoundNeighbor / 4 + 1;
             }
             
-            DECISION neighbor = task.getNeighbor(currentNode, radiusFoundNeighbor);
-            if (task.isFirstBetter(neighbor, currentNode)) {
-                currentNode = neighbor;
+            DECISION neighbor = task.getNeighbor(currentNode.getDecision(), radiusFoundNeighbor);
+            GeneticAlgorithm.FitnessDecision<DECISION> neighborDecision = GeneticAlgorithm.calculateFitness(task, neighbor);
+            if (GeneticAlgorithm.FitnessDecision.isFirstBetter(neighborDecision, currentNode)) {
+                currentNode = neighborDecision;
             }
 
         } while (statistic.iterationCount != maxNumberOfIteration);
 
-        final DECISION result = currentNode;
+        final DECISION result = currentNode.getDecision();
         ResultTaskInfo resultTaskInfo = new ResultTaskInfo(getClass().getSimpleName(), result, statistic);
         resultTaskInfo.setContinueData(new ContinueWithOneDecisionInfo(result));
         return resultTaskInfo;
