@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -70,6 +71,12 @@ public class MainController implements Initializable {
 
         chartEvolutionBest.setCreateSymbols(false);
         chartEvolutionBest.setLegendVisible(false);
+//        setUpperBoundChart();
+    }
+
+    private void setUpperBoundChart() {
+        ((NumberAxis)chartEvolutionBest.getYAxis()).setAutoRanging(false);
+        ((NumberAxis)chartEvolutionBest.getYAxis()).setUpperBound(10_000);
     }
 
     private void changeMethodField(MainConsole.DecisionMethodEnum newValue) {
@@ -175,7 +182,6 @@ public class MainController implements Initializable {
 
         Platform.runLater(() -> {
             showChart(numberNumberSeries);
-
             runHillClimbingOnResultButton.setDisable(false);
             continueMainMethodOnResultButton.setDisable(false);
 
@@ -285,8 +291,12 @@ public class MainController implements Initializable {
                 + "\n\tfor: " + result
                 + "\n work statistic:\n" + statistic + "\n");
 
-        Decision localOptimum = new HillClimbing(result, 5, 1).process(problemTask).getResult();
-        printRow("check is local optimum radius 5: "
+        int radiusFoundNeighbor = (int) (Math.log(2000) / Math.log( ((DiophantineEquation)currentProblemTask).getCoefficients().length));
+
+        System.out.println("radius = " + radiusFoundNeighbor);
+
+        Decision localOptimum = new HillClimbing(result, radiusFoundNeighbor, 1).process(problemTask).getResult();
+        printRow("check is local optimum radius "+radiusFoundNeighbor+": "
                 + result.equals(localOptimum)
                 + " (local:" + localOptimum + ")");
     }

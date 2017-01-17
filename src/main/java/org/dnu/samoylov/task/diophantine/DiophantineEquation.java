@@ -11,7 +11,7 @@ import java.util.*;
 public class DiophantineEquation implements SwarmProblemTask<DioDecision, DioObjective> {
 
     public static int BOTTOM_BOUND_OF_SOLUTION = 0;
-    public static int TOP_BOUND_OF_SOLUTION = 1000;// Short.MAX_VALUE;
+    public static int TOP_BOUND_OF_SOLUTION = Short.MAX_VALUE;
 
     private final int[] coefficients;
     private final int[] exponent;
