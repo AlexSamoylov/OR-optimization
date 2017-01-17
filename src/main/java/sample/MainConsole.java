@@ -41,10 +41,10 @@ public class MainConsole {
 
         final Objective minObjective = problemTask.calculateObjective(result);
 
-        System.out.println("method: " + taskInfo.getNameOfOptimizationMethod()
-                + "\nresult: " + minObjective
-                + "\n\tfor: " + result
-                + "\n work statistic:\n" + statistic + "\n");
+        System.out.println("[" + taskInfo.getNameOfOptimizationMethod()
+                + "]\nresult: " + minObjective
+                + " for: " + result
+                + "\n\n" + statistic + "\n");
 
         Decision localOptimum = new HillClimbing(result, 5, 1).process(problemTask).getResult();
         System.out.println("check is local optimum radius 5: "

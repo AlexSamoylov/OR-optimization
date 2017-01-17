@@ -280,10 +280,10 @@ public class MainController implements Initializable {
 
         final Objective minObjective = problemTask.calculateObjective(result);
 
-        printRow("method: " + taskInfo.getNameOfOptimizationMethod()
-                + "\nresult: " + minObjective
-                + "\n\tfor: " + result
-                + "\n work statistic:\n" + statistic + "\n");
+        printRow("[" + taskInfo.getNameOfOptimizationMethod()
+                + "]\nresult: " + minObjective
+                + " for: " + result
+                + "\n\n" + statistic);
 
         Decision localOptimum = new HillClimbing(result, 5, 1).process(problemTask).getResult();
         printRow("check is local optimum radius 5: "
